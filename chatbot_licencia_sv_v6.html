@@ -75,7 +75,7 @@ body{background:transparent}
 .wbox{background:#faeeda;border:.5px solid #fac775;border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;color:#633806;margin-top:8px}
 .gbox{background:#e1f5ee;border:.5px solid #9fe1cb;border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;color:#085041;margin-top:8px}
 /* inputs */
-input[type=date],select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);display:block;margin-top:6px}
+input.date-inp,select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);display:block;margin-top:6px}
 .err{color:#a32d2d;font-size:12px;margin-top:4px;display:none}
 /* typing */
 .typing{display:flex;gap:4px;align-items:center;padding:10px 14px}
@@ -166,9 +166,6 @@ input[type=date],select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.
 .dni-inp{width:100%;font-size:15px;padding:10px 12px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);letter-spacing:.05em}
 .export-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
 .export-row .cta-btn,.export-row .opt-btn{flex:1;min-width:140px;justify-content:center}
-.export-mail{width:100%;margin-top:12px;display:flex;flex-direction:column;gap:8px}
-.export-mail label{font-size:12px;color:var(--color-text-secondary)}
-.export-mail input[type=email]{width:100%;font-size:14px;padding:10px 12px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md)}
 .clase-block.prof-block-locked .clase-toggle{pointer-events:none;cursor:not-allowed;opacity:.62}
 .clase-block.prof-block-locked .clase-toggle .ct-arrow{opacity:.45}
 .fin-deriv .tc{text-align:left}
@@ -252,6 +249,21 @@ function fmtFechaHoraAhora(){
   const hh=String(n.getHours()).padStart(2,"0");
   const mi=String(n.getMinutes()).padStart(2,"0");
   return `${d}/${mo}/${y}, ${hh}:${mi}`;
+}
+function isoToDmy(iso){
+  if(!iso)return "";
+  const p=String(iso).split("-");
+  if(p.length<3)return "";
+  return `${String(p[2]).padStart(2,"0")}/${String(p[1]).padStart(2,"0")}/${String(p[0])}`;
+}
+function dmyToIso(dmy){
+  const m=String(dmy||"").trim().match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+  if(!m)return null;
+  const dd=Number(m[1]),mm=Number(m[2]),yyyy=Number(m[3]);
+  if(mm<1||mm>12||dd<1||dd>31)return null;
+  const dt=new Date(yyyy,mm-1,dd);
+  if(dt.getFullYear()!==yyyy||dt.getMonth()!==mm-1||dt.getDate()!==dd)return null;
+  return `${String(yyyy).padStart(4,"0")}-${String(mm).padStart(2,"0")}-${String(dd).padStart(2,"0")}`;
 }
 function addUser(t){const d=document.createElement("div");d.className="msg user";d.innerHTML=`<div class="av">Vos</div><div class="bubble">${t}</div>`;msgs.appendChild(d);d.scrollIntoView({behavior:"smooth",block:"end"});}
 function addBot(html,delay=0){return new Promise(res=>{setTimeout(()=>{const t=document.createElement("div");t.className="msg bot";t.innerHTML=`<div class="av">SV</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;msgs.appendChild(t);t.scrollIntoView({behavior:"smooth",block:"end"});setTimeout(()=>{t.remove();const d=document.createElement("div");d.className="msg bot";d.innerHTML=`<div class="av">SV</div><div class="bubble">${html}</div>`;msgs.appendChild(d);d.scrollIntoView({behavior:"smooth",block:"end"});res();},480);},delay);});}
@@ -350,30 +362,45 @@ function showDate(hint,backFn,onConfirm,savedVal,cfg){
   const mode=(cfg&&cfg.mode)||"nacimiento";
   clearOpts();if(backFn)addBack(backFn);
   if(hint){const hintEl=document.createElement("p");hintEl.className="sub-desc";hintEl.style.marginBottom="8px";hintEl.style.color="var(--color-text-secondary)";hintEl.textContent=hint;opts.appendChild(hintEl);}
-  const inp=document.createElement("input");inp.type="date";
-  if(mode==="nacimiento")inp.max=new Date().toISOString().split("T")[0];
-  if(savedVal)inp.value=savedVal;
+  const inp=document.createElement("input");inp.type="text";inp.className="date-inp";inp.inputMode="numeric";inp.autocomplete="off";inp.maxLength=10;inp.placeholder="dd/mm/aaaa";
+  if(savedVal)inp.value=isoToDmy(savedVal);
   const err=document.createElement("p");err.className="err";
   const btn=makeConfirmBtn(mode==="nacimiento"?"Confirmar fecha de nacimiento":"Confirmar fecha de vencimiento");
-  function syncBtn(){
-    if(!inp.value){btn.classList.remove("on");return;}
+  function validacionFecha(){
+    const iso=dmyToIso(inp.value);
+    if(!iso){return{ok:false,msg:"Ingresá la fecha en formato dd/mm/aaaa."};}
     if(mode==="nacimiento"){
-      const ed=calcEdad(inp.value);
-      if(ed<16){err.textContent=`Tenés ${ed} años. La edad mínima es 16 años.`;err.style.display="block";btn.classList.remove("on");return;}
-      err.style.display="none";
-    } else err.style.display="none";
+      const hoy=new Date();
+      const maxIso=`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,"0")}-${String(hoy.getDate()).padStart(2,"0")}`;
+      if(iso>maxIso)return{ok:false,msg:"La fecha de nacimiento no puede ser futura."};
+      const ed=calcEdad(iso);
+      if(ed<16)return{ok:false,msg:`Tenés ${ed} años. La edad mínima es 16 años.`};
+    }
+    return{ok:true,iso};
+  }
+  function syncBtn(){
+    if(!inp.value){btn.classList.remove("on");err.style.display="none";return;}
+    const v=validacionFecha();
+    if(!v.ok){err.textContent=v.msg;err.style.display="block";btn.classList.remove("on");return;}
+    err.style.display="none";
     activateBtn(btn,mode==="nacimiento"?"Confirmar fecha de nacimiento":"Confirmar fecha de vencimiento");
   }
-  inp.addEventListener("change",syncBtn);
+  inp.addEventListener("input",()=>{
+    inp.value=inp.value.replace(/[^\d/]/g,"").slice(0,10);
+    syncBtn();
+  });
+  inp.addEventListener("blur",()=>{
+    const n=inp.value.replace(/[^\d]/g,"").slice(0,8);
+    if(n.length===8)inp.value=`${n.slice(0,2)}/${n.slice(2,4)}/${n.slice(4,8)}`;
+    syncBtn();
+  });
   if(savedVal)syncBtn();
   btn.onclick=()=>{
     if(!inp.value)return;
-    if(mode==="nacimiento"){
-      const ed=calcEdad(inp.value);
-      if(ed<16){err.textContent=`Tenés ${ed} años. La edad mínima es 16 años.`;err.style.display="block";return;}
-    }
+    const v=validacionFecha();
+    if(!v.ok){err.textContent=v.msg;err.style.display="block";return;}
     err.style.display="none";
-    onConfirm(inp.value);
+    onConfirm(v.iso);
   };
   bindEnterSubmitInput(inp,btn);
   opts.appendChild(inp);opts.appendChild(err);opts.appendChild(btn);
@@ -814,7 +841,7 @@ async function paso2_nac_corregir(){
   },S.nac,{mode:"nacimiento"});
 }
 
-/** Compartir + copiar + correo (destinatario opcional en el campo de correo). */
+/** Compartir + copiar + correo simple (sin cuadro de destinatario). */
 function appendExportToolbar(parent,txt){
   const subj=encodeURIComponent(`Licencia de conducir — DNI ${S.dni||""} — ${S.localidad||""}`);
   const body=encodeURIComponent(txt);
@@ -850,28 +877,11 @@ function appendExportToolbar(parent,txt){
   };
   row.appendChild(bCp);
 
+  const bMail=document.createElement("button");bMail.type="button";bMail.className="cta-btn cp";bMail.innerHTML="✉ Enviar por correo";
+  bMail.onclick=()=>{window.location.href=`mailto:?subject=${subj}&body=${body}`;};
+  row.appendChild(bMail);
+
   parent.appendChild(row);
-
-  const mailWrap=document.createElement("div");mailWrap.className="export-mail";
-  const mailLab=document.createElement("label");mailLab.htmlFor="export-mail-inp";
-  mailLab.textContent="Correo electrónico (opcional — si lo completás, se abre tu gestor para enviar a esa dirección)";
-  const mailInp=document.createElement("input");mailInp.type="email";mailInp.id="export-mail-inp";mailInp.autocomplete="email";mailInp.inputMode="email";mailInp.placeholder="ejemplo@correo.com";
-  const bMail=document.createElement("button");bMail.type="button";bMail.className="cta-btn cp";bMail.innerHTML="✉ Abrir correo con el resumen";
-  bMail.onclick=()=>{
-    const to=(mailInp.value||"").trim();
-    const re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(to&&!re.test(to)){alert("Revisá el formato del correo (debe incluir @ y dominio).");mailInp.focus();return;}
-    const href=to?`mailto:${encodeURIComponent(to)}?subject=${subj}&body=${body}`:`mailto:?subject=${subj}&body=${body}`;
-    window.location.href=href;
-  };
-  mailInp.addEventListener("keydown",e=>{
-    if(e.key!=="Enter")return;
-    e.preventDefault();
-    bMail.click();
-  });
-  mailWrap.appendChild(mailLab);mailWrap.appendChild(mailInp);mailWrap.appendChild(bMail);
-  parent.appendChild(mailWrap);
-
   return row;
 }
 
@@ -928,7 +938,7 @@ async function paso5b_preTurno(o){
   const body=encodeURIComponent(txt);
 
   if(!o.silent){
-    await addBot(`<span class="badge bi">Tu resumen</span><br>Usá <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o <strong>Abrir correo con el resumen</strong> (podés ingresar el correo de destino). Después seguí el paso según tu localidad.`);
+    await addBot(`<span class="badge bi">Tu resumen</span><br>Usá <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o <strong>Enviar por correo</strong>. Después seguí el paso según tu localidad.`);
   }
 
   clearOpts();
@@ -959,7 +969,7 @@ async function paso5b_preTurno(o){
       a.textContent=`Abrir correo a ${L.mail}`;
       a.addEventListener("click",async e=>{
         e.preventDefault();
-        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen. Podés seguir usando <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o el campo de correo arriba en este paso.`);
+        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen. Podés seguir usando <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o <strong>Enviar por correo</strong> arriba en este paso.`);
         window.location.href=a.href;
       });
       opts.appendChild(a);
@@ -970,7 +980,7 @@ async function paso5b_preTurno(o){
       bWa.innerHTML="💬 Enviar resumen por WhatsApp al municipio";
       bWa.onclick=async()=>{
         window.open(wa,"_blank","noopener,noreferrer");
-        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar. <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> y <strong>Abrir correo con el resumen</strong> siguen arriba en este paso.`);
+        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar. <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> y <strong>Enviar por correo</strong> siguen arriba en este paso.`);
       };
       opts.appendChild(bWa);
     } else if(L.mail){
@@ -979,7 +989,7 @@ async function paso5b_preTurno(o){
       a.textContent=`Abrir correo a ${L.mail}`;
       a.addEventListener("click",async e=>{
         e.preventDefault();
-        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen. Podés seguir usando <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o el campo de correo arriba en este paso.`);
+        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen. Podés seguir usando <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o <strong>Enviar por correo</strong> arriba en este paso.`);
         window.location.href=a.href;
       });
       opts.appendChild(a);
@@ -990,7 +1000,7 @@ async function paso5b_preTurno(o){
       bWa.innerHTML="💬 Enviar resumen por WhatsApp al municipio";
       bWa.onclick=async()=>{
         window.open(wa,"_blank","noopener,noreferrer");
-        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar. <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> y <strong>Abrir correo con el resumen</strong> siguen arriba en este paso.`);
+        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar. <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> y <strong>Enviar por correo</strong> siguen arriba en este paso.`);
       };
       opts.appendChild(bWa);
     } else {
