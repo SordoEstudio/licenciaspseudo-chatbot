@@ -170,6 +170,19 @@ input.date-inp,select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5p
 .clase-block.prof-block-locked .clase-toggle .ct-arrow{opacity:.45}
 .fin-deriv .tc{text-align:left}
 .fin-deriv .tc p{font-size:13px;line-height:1.5}
+/* sequential requirements */
+.req-item{border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px;overflow:hidden;transition:border-color .2s,background .2s}
+.req-item.req-active{border-color:#1a4fa0}
+.req-item.req-pending{opacity:.42;pointer-events:none}
+.req-item.req-done{border-color:#0f6e56;background:#f0faf6}
+.req-hd{display:flex;align-items:flex-start;gap:10px;padding:10px 12px}
+.req-chk-icon{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--color-border-secondary);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;color:transparent;transition:background .2s,border-color .2s,color .2s}
+.req-done .req-chk-icon{background:#0f6e56;border-color:#0f6e56;color:white}
+.req-act{padding:8px 12px 10px;border-top:.5px solid var(--color-border-tertiary);display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.req-pending .req-act{display:none}
+.req-lotengo{background:#1a4fa0;color:white;border:none;border-radius:var(--border-radius-md);padding:8px 14px;font-size:12px;cursor:pointer;font-weight:500;display:flex;align-items:center;transition:opacity .12s}
+.req-lotengo:hover{opacity:.88}
+.req-done .req-lotengo{display:none!important}
 </style>
 
 <div id="cw">
@@ -201,24 +214,28 @@ const LOCS={
 
 /* includes = subclases que quedan automáticamente incluidas si se elige esta */
 const SUBS=[
-  {cod:"A.1.1",label:"A.1.1 — Ciclomotores hasta 50cc / 4kw eléctrico",desc:"Particular",edad:16,prof:false,inc:[],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
-  {cod:"A.1.2",label:"A.1.2 — Motos hasta 150cc / 11kw eléctrico",desc:"Particular",edad:17,prof:false,inc:["A.1.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
-  {cod:"A.1.3",label:"A.1.3 — Motos 150–300cc / 11–20kw eléctrico",desc:"Particular",edad:19,prof:false,inc:["A.1.2","A.1.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
-  {cod:"A.1.4",label:"A.1.4 — Motos más de 300cc / más de 20kw eléctrico",desc:"Particular",edad:21,prof:false,inc:["A.1.3","A.1.2","A.1.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
-  {cod:"A.2.1",label:"A.2.1 — Triciclos/cuatriciclos sin cabina hasta 300cc",desc:"Particular",edad:17,prof:false,inc:[],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
-  {cod:"A.2.2",label:"A.2.2 — Triciclos/cuatriciclos sin cabina más de 300cc",desc:"Particular",edad:19,prof:false,inc:["A.2.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
-  {cod:"A.3",  label:"A.3 — Triciclos/cuatriciclos cabinados (volante)",desc:"Particular",edad:17,prof:false,inc:[],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
-  {cod:"B.1",label:"B.1 — Autos y camionetas hasta 3.500 kg",desc:"Particular",edad:17,prof:false,inc:[],grupo:"B",gLabel:"Clase B — Automóviles particulares",ic:"🚗"},
-  {cod:"B.2",label:"B.2 — Autos con acoplado liviano",desc:"Particular",edad:18,prof:false,inc:["B.1"],grupo:"B",gLabel:"Clase B — Automóviles particulares",ic:"🚗"},
-  {cod:"C.1",label:"C.1 — Camiones sin acoplado",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"C",gLabel:"Clase C — Camiones y carga",ic:"🚛"},
-  {cod:"C.2",label:"C.2 — Camiones con acoplado o semirremolque",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"C",gLabel:"Clase C — Camiones y carga",ic:"🚛"},
-  {cod:"C.3",label:"C.3 — Camiones articulados (más de 2 ejes)",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"C",gLabel:"Clase C — Camiones y carga",ic:"🚛"},
+  // Clase A — Motovehículos
+  {cod:"A.2.1",label:"A.2.1 — Motocicletas hasta 150cc",desc:"Particular",edad:18,prof:false,inc:[],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"A.2.2",label:"A.2.2 — Motocicletas de 150cc a 300cc",desc:"Particular — mayor de 21 años (o 20 con 2 años de A.2.1 vigente)",edad:21,prof:false,inc:["A.2.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"A.3",  label:"A.3 — Motocicletas de más de 300cc",desc:"Particular",edad:21,prof:false,inc:["A.2.2","A.2.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"A.4",  label:"A.4 — Motos para transporte comercial/industrial",desc:"Profesional — debe acompañarse de otra clase A",edad:21,prof:true,inc:[],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  // Clase B — Automóviles y camionetas
+  {cod:"B.1",label:"B.1 — Automóviles, utilitarios y camionetas hasta 3.500 kg",desc:"Particular",edad:18,prof:false,inc:[],grupo:"B",gLabel:"Clase B — Automóviles y camionetas",ic:"🚗"},
+  {cod:"B.2",label:"B.2 — B.1 con acoplado hasta 750 kg o casa rodante",desc:"Particular",edad:18,prof:false,inc:["B.1"],grupo:"B",gLabel:"Clase B — Automóviles y camionetas",ic:"🚗"},
+  // Clase C — Camiones
+  {cod:"C",label:"C — Camiones sin acoplado y casas rodantes de más de 3.500 kg",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"C",gLabel:"Clase C — Camiones",ic:"🚛"},
+  // Clase D — Transporte de pasajeros
   {cod:"D.1",label:"D.1 — Hasta 8 pasajeros (remis, taxi, transporte privado)",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
-  {cod:"D.2",label:"D.2 — 9 a 20 pasajeros",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
-  {cod:"D.3",label:"D.3 — Más de 20 pasajeros / colectivos",desc:"Profesional",edad:21,prof:true,inc:["D.2","B.1"],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
-  {cod:"D.4",label:"D.4 — Urgencia y emergencia",desc:"Profesional — debe acompañarse de otra subclase",edad:21,prof:true,inc:[],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
-  {cod:"E.1",label:"E.1 — Veh. clase C o D con remolques/articulaciones",desc:"Profesional",edad:21,prof:true,inc:["B.2","B.1"],grupo:"E",gLabel:"Clase E — Maquinaria y articulados",ic:"⚙"},
-  {cod:"E.2",label:"E.2 — Maquinaria especial no agrícola",desc:"Profesional",edad:21,prof:true,inc:[],grupo:"E",gLabel:"Clase E — Maquinaria y articulados",ic:"⚙"},
+  {cod:"D.2",label:"D.2 — Más de 8 pasajeros",desc:"Profesional",edad:21,prof:true,inc:["D.1","B.1"],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
+  {cod:"D.3",label:"D.3 — Urgencia, emergencia o similares",desc:"Profesional — debe acompañarse de clase B.1 o D.1",edad:21,prof:true,inc:[],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
+  // Clase E — Articulados y maquinaria no agrícola
+  {cod:"E.1",label:"E.1 — Camiones articulados y/o con acoplado",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"E",gLabel:"Clase E — Articulados y maquinaria no agrícola",ic:"⚙"},
+  {cod:"E.2",label:"E.2 — Maquinaria especial no agrícola",desc:"Profesional",edad:21,prof:true,inc:[],grupo:"E",gLabel:"Clase E — Articulados y maquinaria no agrícola",ic:"⚙"},
+  // Clase F — Adaptados para discapacidad
+  {cod:"F",label:"F — Automotores incluidos en clase B o profesionales, adaptados",desc:"Debe acompañarse de B, C, D o E. Adaptación según la discapacidad del titular. Mayor de 18 años. Si acompaña a una clase profesional, requiere 2 años de antigüedad en B.",edad:18,prof:false,inc:[],grupo:"F",gLabel:"Clase F — Adaptados para discapacidad",ic:"♿"},
+  // Clase G — Maquinaria agrícola
+  {cod:"G.1",label:"G.1 — Tractores agrícolas",desc:"Mayor de 18 años",edad:18,prof:false,inc:[],grupo:"G",gLabel:"Clase G — Maquinaria agrícola",ic:"🚜"},
+  {cod:"G.2",label:"G.2 — Maquinaria especial agrícola",desc:"Mayor de 18 años",edad:18,prof:false,inc:[],grupo:"G",gLabel:"Clase G — Maquinaria agrícola",ic:"🚜"},
 ];
 
 function getIncluidas(selSet){
@@ -373,8 +390,6 @@ function showDate(hint,backFn,onConfirm,savedVal,cfg){
       const hoy=new Date();
       const maxIso=`${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,"0")}-${String(hoy.getDate()).padStart(2,"0")}`;
       if(iso>maxIso)return{ok:false,msg:"La fecha de nacimiento no puede ser futura."};
-      const ed=calcEdad(iso);
-      if(ed<16)return{ok:false,msg:`Tenés ${ed} años. La edad mínima es 16 años.`};
     }
     return{ok:true,iso};
   }
@@ -386,7 +401,11 @@ function showDate(hint,backFn,onConfirm,savedVal,cfg){
     activateBtn(btn,mode==="nacimiento"?"Confirmar fecha de nacimiento":"Confirmar fecha de vencimiento");
   }
   inp.addEventListener("input",()=>{
-    inp.value=inp.value.replace(/[^\d/]/g,"").slice(0,10);
+    const raw=inp.value.replace(/[^\d]/g,"").slice(0,8);
+    let fmt=raw;
+    if(raw.length>4)fmt=raw.slice(0,2)+"/"+raw.slice(2,4)+"/"+raw.slice(4);
+    else if(raw.length>2)fmt=raw.slice(0,2)+"/"+raw.slice(2);
+    inp.value=fmt;
     syncBtn();
   });
   inp.addEventListener("blur",()=>{
@@ -410,7 +429,7 @@ function showDate(hint,backFn,onConfirm,savedVal,cfg){
 function showDni(backFn){
   clearOpts();if(backFn)addBack(backFn);
   const hint=document.createElement("p");hint.className="sub-desc";hint.style.marginBottom="8px";hint.style.color="var(--color-text-secondary)";
-  hint.textContent="Ingresá el número de tu DNI (solo números, sin puntos).";
+  hint.textContent="Sin puntos, solo números.";
   const inp=document.createElement("input");inp.type="text";inp.className="dni-inp";inp.inputMode="numeric";inp.autocomplete="off";inp.maxLength=10;inp.placeholder="Ej.: 38123456";
   if(S.dni)inp.value=S.dni;
   const err=document.createElement("p");err.className="err";
@@ -464,17 +483,17 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
     return true;
   });
   const selSet=new Set(preselF.filter(c=>!yaTiene.has(c)));
-  const grupos=["A","B","C","D","E"];
+  const grupos=["A","B","C","D","E","F","G"];
   const rowMap={};
   const blockRefs=[];
   const blocksByGrupo={};
   const wrap=document.createElement("div");
 
-  const nota=document.createElement("div");nota.className="ibox";nota.style.marginBottom="10px";
-  nota.innerHTML=cfg.notaHtml||(yaTiene.size
-    ?"Marcá solo las <strong>nuevas</strong> subclases que querés agregar. Las que ya tenés aparecen como referencia."
-    :"Seleccioná una o más subclases. Podés combinar clases (ej: A.1.2 y B.1). Las incluidas automáticamente por tu elección se muestran en gris.");
-  wrap.appendChild(nota);
+  if(cfg.notaHtml){
+    const nota=document.createElement("div");nota.className="ibox";nota.style.marginBottom="10px";
+    nota.innerHTML=cfg.notaHtml;
+    wrap.appendChild(nota);
+  }
 
   function closeOtherBlocks(exceptBlock){
     blockRefs.forEach(({block,subsDiv,tog})=>{
@@ -547,6 +566,16 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
   appendGrupo("C");
   appendGrupo("D");
   appendGrupo("E");
+  appendGrupo("F");
+  appendGrupo("G");
+  const firstBlock=wrap.querySelector(".clase-block");
+  if(!firstBlock){
+    const av0=document.createElement("div");
+    av0.className="wbox";
+    av0.style.marginBottom="10px";
+    av0.textContent="No encontramos subclases para mostrar con tu edad actual. Revisá la fecha de nacimiento o volvé al paso anterior.";
+    wrap.appendChild(av0);
+  }
 
   const sumWrap=document.createElement("div");
   sumWrap.style.cssText="margin-top:10px;background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;";
@@ -555,6 +584,29 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
   sumWrap.appendChild(sumLbl);sumWrap.appendChild(tagWrap);
   wrap.appendChild(sumWrap);
 
+  const errBox=document.createElement("div");errBox.className="wbox";
+  errBox.style.cssText="margin-top:8px;display:none;font-size:13px;line-height:1.5";
+  wrap.appendChild(errBox);
+
+  function validarAcompanantes(eff){
+    const arr=Array.from(eff);
+    const errs=[];
+    if(eff.has("F")){
+      const tieneAcomp=arr.some(c=>/^[BCDE]/.test(c));
+      if(!tieneAcomp)errs.push("La clase <strong>F</strong> debe ir acompañada de una clase B, C, D o E.");
+    }
+    if(eff.has("A.4")){
+      const tieneOtraA=arr.some(c=>/^A\./.test(c)&&c!=="A.4");
+      if(!tieneOtraA)errs.push("La clase <strong>A.4</strong> debe ir acompañada de otra clase A (A.2.1, A.2.2 o A.3).");
+    }
+    if(eff.has("D.3")){
+      const acomp=["B.1","B.2","C","D.1","D.2","E.1","E.2"];
+      const tieneAcomp=arr.some(c=>acomp.includes(c));
+      if(!tieneAcomp)errs.push("La clase <strong>D.3</strong> debe ir acompañada de B.1 (o superior) o D.1.");
+    }
+    return errs;
+  }
+
   const btn=makeConfirmBtn("Continuar");
   btn.onclick=()=>{
     const effective=new Set(selSet);
@@ -562,6 +614,14 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
     const inc=getIncluidas(selSet);
     inc.forEach(c=>effective.add(c));
     if(!effective.size)return;
+    const errs=validarAcompanantes(effective);
+    if(errs.length){
+      errBox.innerHTML=errs.map(e=>`⚠ ${e}`).join("<br>");
+      errBox.style.display="block";
+      errBox.scrollIntoView({behavior:"smooth",block:"nearest"});
+      return;
+    }
+    errBox.style.display="none";
     const arr=Array.from(effective);
     S.selUsuario=Array.from(selSet).sort((a,b)=>a.localeCompare(b));
     S.subclases=arr;
@@ -589,6 +649,7 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
   opts.appendChild(wrap);
 
   function updateSelector(lastClickedRow){
+    if(errBox)errBox.style.display="none";
     const inc=getIncluidas(selSet);
     Object.entries(rowMap).forEach(([cod,o])=>{
       const row=o.row;
@@ -642,7 +703,7 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
         const t=document.createElement("span");t.className="stag"+(sc&&sc.prof?" prof":"");t.textContent=c;
         tagWrap.appendChild(t);
       });
-      activateBtn(btn,`Continuar (${totalEff.size} subclase${totalEff.size>1?"s":""})`);
+      activateBtn(btn,`Continuar (${soloSel.length} seleccionada${soloSel.length!==1?"s":""})`);
     }
     if(lastClickedRow&&lastClickedRow.dataset.cod){
       const ref=rowMap[lastClickedRow.dataset.cod];
@@ -651,17 +712,6 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
     opts.scrollIntoView({behavior:"smooth",block:"end"});
   }
 
-  if(preselF&&preselF.length){
-    grupos.forEach(g=>{
-      const hasPre=SUBS.filter(s=>s.grupo===g).some(s=>preselF.includes(s.cod));
-      const block=blocksByGrupo[g];
-      if(hasPre&&block){
-        closeOtherBlocks(block);
-        block.querySelector(".clase-subs").classList.add("open");
-        block.querySelector(".clase-toggle").classList.add("open");
-      }
-    });
-  }
   updateSelector();
   opts.scrollIntoView({behavior:"smooth",block:"end"});
 }
@@ -670,7 +720,7 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
 
 async function paso0(){
   setProg(0);
-  await addBot(`<span class="badge bi">Bienvenida/o</span><br>Hola, soy el asistente para tramitar tu <strong>Licencia de Conducir</strong> en San Vicente, Santa Fe.<br><br>Te voy a guiar paso a paso.`);
+  await addBot(`<span class="badge bi">Bienvenida/o</span><br>Hola, soy el asistente y te voy a guiar paso por paso para la obtención de tu <strong>Licencia de Conducir</strong>. Comencemos.<br><br>Ingresá tu número de DNI.`);
   showDni(null);
 }
 
@@ -681,7 +731,11 @@ function backToDni(){
 
 async function paso1_loc(){
   setProg(1);
-  await addBot(`¿En qué localidad tenés tu domicilio real? Solo podés tramitar en el municipio que corresponde a tu domicilio (Ley 13.133, Art. 25).`);
+  await addBot(`¿En qué localidad vivís? El trámite se hace en el municipio de tu domicilio real (el que figura en tu DNI).`);
+  const ayuda=document.createElement("details");
+  ayuda.style.cssText="margin:8px 0 6px;font-size:12px;color:var(--color-text-secondary)";
+  ayuda.innerHTML=`<summary style="cursor:pointer">¿Por qué?</summary><div style="margin-top:6px">Porque legalmente la licencia se tramita según domicilio real. Base: Ley 13.133, Art. 25. <a href="https://www.santafe.gov.ar/normativa/item.php?id=111586&cod=26cfeef1d3ef4f785b76888ec0a317ea" target="_blank" rel="noopener">Ver normativa</a>.</div>`;
+  opts.appendChild(ayuda);
   showSelect(Object.keys(LOCS),"Seleccioná tu localidad",backToDni,(val)=>{
     S.localidad=val;
     S.tramiteLocal=!!LOCS[val].propio;
@@ -693,13 +747,44 @@ async function paso1_loc(){
 async function paso2_nac(){
   setProg(1);
   await addBot(`¿Cuál es tu <strong>fecha de nacimiento</strong>?`);
-  showDate("Elegí la fecha y tocá confirmar para seguir.",paso1_loc,(val)=>{
+  showDate("Figura en el frente de tu DNI.",paso1_loc,(val)=>{
     const edad=calcEdad(val);
-    S.nac=val;S.edad=edad;
     const fmt=fmtFechaDMY(val);
     addUser(`Nacimiento: ${fmt} (${edad} años)`);
-    paso3_tieneLC();
+    if(edad<18){
+      paso2_nac_confirmarEdad(val,edad,fmt);
+    } else if(edad===18){
+      S.nac=val;S.edad=edad;
+      S.tipo="alta";S.licActuales=[];
+      paso4_nuevasSubs();
+    } else {
+      S.nac=val;S.edad=edad;
+      paso3_tieneLC();
+    }
   },S.nac,{mode:"nacimiento"});
+}
+
+async function paso2_nac_confirmarEdad(val,edad,fmt){
+  setProg(1);
+  await addBot(`¿Tenés ${edad} año${edad===1?"":"s"}?`);
+  pickOne([
+    {icon:"✓",label:`Sí, tengo ${edad} año${edad===1?"":"s"}`},
+    {icon:"✗",label:"No, me equivoqué al ingresar la fecha"}
+  ],async(it,idx)=>{
+    if(idx===0){
+      addUser(`Sí, tengo ${edad} años`);
+      await addBot(`La edad mínima para tramitar licencia es <strong>18 años</strong>. Por ahora no podés continuar con el trámite.`);
+      clearOpts();
+      const bEnt=document.createElement("button");bEnt.type="button";bEnt.className="cbtn-confirm on";
+      bEnt.textContent="Entendido";
+      bEnt.onclick=()=>reiniciar();
+      opts.appendChild(bEnt);
+      opts.scrollIntoView({behavior:"smooth",block:"end"});
+    } else {
+      addUser("Me equivoqué");
+      paso2_nac();
+    }
+  },paso1_loc);
 }
 
 /* ── ¿Tiene licencia? ── */
@@ -708,17 +793,79 @@ async function paso3_tieneLC(){
   await addBot(`¿Ya tenés o tuviste una licencia de conducir?`);
   pickOne([
     {icon:"✗",label:"No, nunca tuve licencia"},
-    {icon:"✓",label:"Sí, tengo o tuve una licencia"}
+    {icon:"✓",label:"Sí, tengo o tuve una licencia"},
+    {icon:"⚠",label:"La extravié (duplicado)"}
   ],(it,idx)=>{
     if(idx===0){addUser("No, nunca tuve licencia");S.tipo="alta";S.licActuales=[];paso4_nuevasSubs();}
-    else{addUser("Sí, tengo o tuve una licencia");paso3b_licActuales();}
+    else if(idx===1){addUser("Sí, tengo o tuve una licencia");paso3b_licActuales();}
+    else{addUser("La extravié (duplicado)");paso3x_extravio();}
   },paso2_nac);
+}
+
+async function paso3x_extravio(){
+  setProg(2);
+  await addBot(`Vamos a registrar algunos datos para derivar tu caso. ¿Recordás cuándo vencía tu licencia?`);
+  const info={venc:null,clases:[]};
+  pickOne([
+    {icon:"🗓",label:"Ingresar fecha"},
+    {icon:"✗",label:"No recuerdo"}
+  ],(it,idx)=>{
+    if(idx===0){
+      addUser("Ingresar fecha");
+      showDate("Si la recordás, ingresala en formato dd/mm/aaaa.",paso3_tieneLC,(val)=>{
+        info.venc=val;
+        addUser(`Vencimiento recordado: ${fmtFechaDMY(val)}`);
+        paso3x_extravio_clases(info);
+      },null,{mode:"vencimiento"});
+    } else {
+      addUser("No recuerdo");
+      paso3x_extravio_clases(info);
+    }
+  },paso3_tieneLC);
+}
+function paso3x_extravio_clases(info){
+  void addBot(`¿Recordás qué clases tenías vigentes en la licencia que extraviaste?`);
+  pickOne([
+    {icon:"✓",label:"Sí, las recuerdo"},
+    {icon:"✗",label:"No las recuerdo"}
+  ],(it,idx)=>{
+    if(idx===0){
+      addUser("Sí, las recuerdo");
+      showSubclasSelector(S.edad,[],(arr)=>{
+        info.clases=arr;
+        addUser(`Clases recordadas: ${arr.join(", ")}`);
+        paso3x_extravio_final(info);
+      },paso3_tieneLC,{notaHtml:"Marcá las clases que recordás de tu licencia extraviada."});
+    } else {
+      addUser("No las recuerdo");
+      paso3x_extravio_final(info);
+    }
+  },paso3_tieneLC);
+}
+async function paso3x_extravio_final(info){
+  const msg=[
+    "Hola, necesito orientación por duplicado de licencia extraviada.",
+    `DNI: ${S.dni||"—"}`,
+    `Localidad: ${S.localidad||"—"}`,
+    `Vencimiento (si lo recuerda): ${info.venc?fmtFechaDMY(info.venc):"No recuerda"}`,
+    `Clases recordadas: ${info.clases&&info.clases.length?info.clases.join(", "):"No recuerda"}`
+  ].join("\n");
+  await addBot(`Con estos datos te derivamos por WhatsApp para validación y próximos pasos.`);
+  clearOpts();
+  addBack(paso3_tieneLC,"Volver");
+  const a=document.createElement("a");
+  a.href=`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${encodeURIComponent(msg)}`;
+  a.target="_blank";a.rel="noopener";a.className="cbtn-confirm on";
+  a.style.cssText="display:flex;align-items:center;justify-content:center;text-decoration:none";
+  a.textContent="Enviar consulta por WhatsApp";
+  a.onclick=()=>setTimeout(()=>paso7_feedback(),250);
+  opts.appendChild(a);
 }
 
 /* ── Selección de licencias actuales ── */
 async function paso3b_licActuales(){
   setProg(2);
-  await addBot(`Seleccioná las subclases de tu licencia actual:`);
+  await addBot(`Seleccioná las subclases de tu licencia actual.<br><span style="font-size:12px;color:var(--color-text-secondary)">Las encontrás impresas en el frente de tu carné.</span>`);
   showSubclasSelector(S.edad,S.licActuales,(selArr)=>{
     S.licActuales=selArr;
     const etq=selArr.join(", ");
@@ -732,8 +879,8 @@ async function paso3bb_eleccionRenovAmp(){
   setProg(2);
   await addBot(`¿Querés <strong>renovar las mismas subclases</strong> que ya tenés o <strong>ampliar</strong> con categorías nuevas?`);
   pickOne([
-    {icon:"↺",label:"Renovar solo lo que ya tengo",sub:"Mantenemos tus clases actuales"},
-    {icon:"+",label:"Ampliar mi licencia",sub:"Vas a elegir subclases nuevas para agregar"}
+    {icon:"↺",label:"Renovar lo que ya tengo"},
+    {icon:"+",label:"Ampliar mi licencia",sub:"Agregar nuevas categorías de vehículo a las que ya tengo"}
   ],(it,idx)=>{
     if(idx===0){S.modoPostLic="renovar_igual";addUser("Renovar mis clases actuales");paso3c_venc();}
     else{S.modoPostLic="ampliar";addUser("Quiero ampliar");paso4_ampliarDesdeLicencia();}
@@ -743,7 +890,7 @@ async function paso3bb_eleccionRenovAmp(){
 /* ── Ampliación: solo subclases nuevas (las actuales van bloqueadas en gris) ── */
 async function paso4_ampliarDesdeLicencia(){
   setProg(3);
-  await addBot(`Seleccioná las <strong>nuevas</strong> subclases que querés agregar. Las que ya tenés aparecen como referencia y no se pueden volver a marcar.`);
+  await addBot(`Seleccioná las <strong>nuevas</strong> subclases que querés agregar.`);
   showSubclasSelector(S.edad,[],()=>{
     addUser(`Subclases a tramitar: ${S.subclases.join(", ")}`);
     paso3c_venc();
@@ -754,7 +901,7 @@ async function paso4_ampliarDesdeLicencia(){
 async function paso3c_venc(){
   setProg(2);
   await addBot(`¿Cuándo vence (o venció) tu licencia?`);
-  showDate("Elegí la fecha y tocá confirmar para seguir.",()=>{
+  showDate("Figura en el frente de tu carné de conducir.",()=>{
     if(S.modoPostLic==="ampliar")paso4_ampliarDesdeLicencia();
     else if(S.modoPostLic==="renovar_igual")paso3bb_eleccionRenovAmp();
     else paso3b_licActuales();
@@ -763,6 +910,7 @@ async function paso3c_venc(){
     const fv=fmtFechaDMY(val);
     if(dias>365){
       const eraRenovarIgual=S.modoPostLic==="renovar_igual";
+      const eraAmpliar=S.modoPostLic==="ampliar";
       S.modoPostLic=null;
       addUser(`Fecha de vencimiento: ${fv} — Vencida hace más de un año`);
       S.tipo="alta_forzada";
@@ -772,6 +920,13 @@ async function paso3c_venc(){
         S.esProf=S.subclases.some(c=>SUBS.find(s=>s.cod===c)?.prof);
         void (async()=>{
           await addBot(`Tu licencia venció hace más de un año: corresponde un <span class="badge bw">Alta</span> con exámenes completos (Ley 13.133).<br><br>Como elegiste renovar tus clases actuales, <strong>mantenemos las mismas subclases</strong> que ya habías indicado; las vas a ver en el resumen.`);
+          paso5_requisitos();
+        })();
+      } else if(eraAmpliar&&S.subclases&&S.subclases.length){
+        S.skipReselectSubs=true;
+        S.esProf=S.subclases.some(c=>SUBS.find(s=>s.cod===c)?.prof);
+        void (async()=>{
+          await addBot(`Tu licencia venció hace más de un año: corresponde un <span class="badge bw">Alta</span> con exámenes completos (Ley 13.133).<br><br>Como ya elegiste las subclases a tramitar, <strong>las mantenemos en el resumen</strong>.`);
           paso5_requisitos();
         })();
       } else {
@@ -890,8 +1045,8 @@ function lineasChecklistDocumentacion(){
   return[
     "DOCUMENTACIÓN A PRESENTAR (checklist):",
     "[ ] 1. DNI vigente — original y fotocopia; domicilio en San Vicente.",
-    "[ ] 2. Certificado CENAT — Certificado Nacional de Antecedentes de Tránsito (online).",
-    "[ ] 3. Libre de multas municipal — sin sanciones firmes pendientes (Art. 23 inc. g, Ley 13.133).",
+    "[ ] 2. Certificado CENAT — obtenerlo en: https://www.santafe.gov.ar/cenat/",
+    `[ ] 3. Libre de multas municipal — solicitar por WhatsApp: https://wa.me/${CONTACTO_WHATSAPP_SV}`,
     "[ ] 4. Declaración Jurada de Salud — aptitudes psicofísicas (Art. 23 inc. c, Ley 13.133).",
   ];
 }
@@ -938,24 +1093,33 @@ async function paso5b_preTurno(o){
   const body=encodeURIComponent(txt);
 
   if(!o.silent){
-    await addBot(`<span class="badge bi">Tu resumen</span><br>Usá <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o <strong>Enviar por correo</strong>. Después seguí el paso según tu localidad.`);
+    await addBot(`<span class="badge bo">¡Listo!</span><br>Ya podés reservar tu turno.`);
   }
 
   clearOpts();
   addBack(paso5_requisitos,"Volver al paso anterior");
 
-  appendExportToolbar(opts,txt);
-
-  const sep=document.createElement("div");sep.style.cssText="margin:16px 0;border-top:.5px solid var(--color-border-tertiary)";
-  opts.appendChild(sep);
-
   if(S.tramiteLocal){
-    const hint=document.createElement("p");hint.className="sub-desc";hint.style.marginBottom="10px";
-    hint.textContent="Tu domicilio corresponde a San Vicente: el siguiente paso es coordinar turno en el sistema local.";
-    opts.appendChild(hint);
-    const bTurno=document.createElement("button");bTurno.type="button";bTurno.className="cbtn-confirm on";bTurno.style.marginTop="4px";bTurno.textContent="Ir al turno";
-    bTurno.onclick=()=>{addUser("Ir al turno");paso6_turno();};
+    const bTurno=document.createElement("button");bTurno.type="button";bTurno.className="cbtn-confirm on";bTurno.style.marginTop="4px";
+    if(S.esProf){
+      const msg=encodeURIComponent(`Hola, quiero tramitar subclases ${S.subclases.join(", ")}, solicito libre de multas y turno.`);
+      bTurno.textContent="💬 Solicitar turno por WhatsApp";
+      bTurno.onclick=()=>{window.open(`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${msg}`,"_blank","noopener,noreferrer");addUser("Solicitar turno profesional");setTimeout(()=>paso7_feedback(),250);};
+    } else if(S.tipo==="renovacion_simple"){
+      bTurno.textContent="🩺 Sacar turno — Examen médico";
+      bTurno.onclick=()=>{window.open("https://turnero-sv.example/","_blank","noopener,noreferrer");addUser("Turno examen médico");setTimeout(()=>paso7_feedback(),250);};
+    } else {
+      bTurno.textContent="📋 Sacar turno — Examen teórico-práctico";
+      bTurno.onclick=()=>{window.open("https://turnero-sv.example/","_blank","noopener,noreferrer");addUser("Turno examen teórico-práctico");setTimeout(()=>paso7_feedback(),250);};
+    }
     opts.appendChild(bTurno);
+
+    const sep=document.createElement("div");sep.style.cssText="margin:16px 0;border-top:.5px solid var(--color-border-tertiary)";
+    opts.appendChild(sep);
+    const shareLbl=document.createElement("p");shareLbl.className="sub-desc";shareLbl.style.marginBottom="6px";
+    shareLbl.textContent="También podés compartir o guardar el resumen:";
+    opts.appendChild(shareLbl);
+    appendExportToolbar(opts,txt);
   } else {
     const L=LOCS[S.localidad];
     const modo=canalFinExterno(S.localidad);
@@ -969,8 +1133,9 @@ async function paso5b_preTurno(o){
       a.textContent=`Abrir correo a ${L.mail}`;
       a.addEventListener("click",async e=>{
         e.preventDefault();
-        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen. Podés seguir usando <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o <strong>Enviar por correo</strong> arriba en este paso.`);
+        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen.`);
         window.location.href=a.href;
+        setTimeout(()=>paso7_feedback(),600);
       });
       opts.appendChild(a);
     } else if(modo==="wa"&&L.wsp){
@@ -980,7 +1145,8 @@ async function paso5b_preTurno(o){
       bWa.innerHTML="💬 Enviar resumen por WhatsApp al municipio";
       bWa.onclick=async()=>{
         window.open(wa,"_blank","noopener,noreferrer");
-        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar. <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> y <strong>Enviar por correo</strong> siguen arriba en este paso.`);
+        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar.`);
+        setTimeout(()=>paso7_feedback(),300);
       };
       opts.appendChild(bWa);
     } else if(L.mail){
@@ -989,8 +1155,9 @@ async function paso5b_preTurno(o){
       a.textContent=`Abrir correo a ${L.mail}`;
       a.addEventListener("click",async e=>{
         e.preventDefault();
-        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen. Podés seguir usando <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o <strong>Enviar por correo</strong> arriba en este paso.`);
+        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen.`);
         window.location.href=a.href;
+        setTimeout(()=>paso7_feedback(),600);
       });
       opts.appendChild(a);
     } else if(L.wsp){
@@ -1000,7 +1167,8 @@ async function paso5b_preTurno(o){
       bWa.innerHTML="💬 Enviar resumen por WhatsApp al municipio";
       bWa.onclick=async()=>{
         window.open(wa,"_blank","noopener,noreferrer");
-        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar. <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> y <strong>Enviar por correo</strong> siguen arriba en este paso.`);
+        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar.`);
+        setTimeout(()=>paso7_feedback(),300);
       };
       opts.appendChild(bWa);
     } else {
@@ -1010,6 +1178,13 @@ async function paso5b_preTurno(o){
     }
     const primExt=!S.tramiteLocal&&(opts.querySelector(".cta-btn.cw")||opts.querySelector("a.cta-btn.cp"));
     if(primExt)bindEnterToPrimaryButton(opts,primExt,{requireOn:false});
+
+    const sep=document.createElement("div");sep.style.cssText="margin:16px 0;border-top:.5px solid var(--color-border-tertiary)";
+    opts.appendChild(sep);
+    const shareLbl=document.createElement("p");shareLbl.className="sub-desc";shareLbl.style.marginBottom="6px";
+    shareLbl.textContent="También podés compartir o guardar el resumen:";
+    opts.appendChild(shareLbl);
+    appendExportToolbar(opts,txt);
   }
   if(S.tramiteLocal){
     const bTurno=opts.querySelector(".cbtn-confirm");
@@ -1025,69 +1200,102 @@ async function paso5_requisitos(){
   const nacFmt=fmtFechaDMY(S.nac);
   const subcDesc=S.selUsuario&&S.selUsuario.length?S.selUsuario.join(", "):S.subclases.join(", ");
 
-  await addBot(`<span class="badge bi">Documentación y resumen</span>`);
+  await addBot(`<span class="badge bi">Documentación y resumen</span><br>Confirmá que tenés cada documento antes de ir al municipio. Después revisamos tus datos y te damos el turno.`);
 
   setTimeout(()=>{
     clearOpts();
     addBack(backDesdeResumen,"Volver al paso anterior");
 
-    const chkCenat=document.createElement("input");chkCenat.type="checkbox";chkCenat.id="chk-cenat";
-    const chkLibre=document.createElement("input");chkLibre.type="checkbox";chkLibre.id="chk-libre";
-    const chkPdf=document.createElement("input");chkPdf.type="checkbox";chkPdf.id="chk-pdf";
     let datosOk=false;
-
     const root=document.createElement("div");
+
+    /* ── Sequential requirements ── */
+    const REQS_BASE=[
+      {
+        title:"DNI vigente",
+        desc:"Original y fotocopia. El domicilio debe figurar en San Vicente. Si el domicilio no figura, necesitás también el certificado de residencia.",
+        action:null
+      },
+      {
+        title:"Certificado CENAT",
+        desc:"Certificado Nacional de Antecedentes de Tránsito. Se tramita y paga online — puede demorar hasta 48 hs hábiles.",
+        action:{label:"Obtener CENAT online",cls:"cs",href:"https://www.santafe.gov.ar/cenat/",blank:true}
+      },
+      {
+        title:"Declaración Jurada de Salud",
+        desc:"Declarás bajo juramento tus aptitudes psicofísicas. Completala antes de ir al municipio.",
+        action:{label:"Descargar Declaración Jurada (PDF)",cls:"cr",href:"#",blank:false}
+      }
+    ];
+    const reqLibre={
+      title:"Libre de multas municipal",
+      desc:"Verificamos que no tenés infracciones firmes pendientes. Si tenés multas, primero regularizá la situación.",
+      action:{label:"Solicitar por WhatsApp",cls:"cw",href:`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${encodeURIComponent("Hola, necesito el libre de multas para licencia de conducir.")}`,blank:true}
+    };
+    const REQS=S.esProf
+      ?[REQS_BASE[0],REQS_BASE[1],REQS_BASE[2]]
+      :[REQS_BASE[0],REQS_BASE[1],reqLibre,REQS_BASE[2]];
+    const checkedCount=Array(REQS.length).fill(false);
 
     const docSec=document.createElement("div");docSec.className="doc-section";
     docSec.innerHTML="<h4>Revisá que tengas la documentación lista</h4>";
 
-    const r1=document.createElement("div");r1.className="doc-chk-row";
-    const sp1=document.createElement("span");sp1.style.width="18px";sp1.style.flexShrink="0";
-    const b1=document.createElement("div");b1.className="doc-chk-lbl";
-    b1.innerHTML="<strong>1. DNI vigente</strong><small>Original y fotocopia. El domicilio debe figurar en San Vicente.</small>";
-    r1.appendChild(sp1);r1.appendChild(b1);
-    docSec.appendChild(r1);
+    const reqEls=[];
 
-    const cenatAct=document.createElement("div");cenatAct.style.marginTop="8px";
-    const aCen=document.createElement("a");aCen.href="https://www.argentina.gob.ar/seguridadvial/licencianacional/cenat";aCen.target="_blank";aCen.rel="noopener";aCen.className="cta-btn cs";aCen.textContent="Obtener CENAT online";
-    aCen.addEventListener("click",()=>{chkCenat.checked=true;upd();});
-    cenatAct.appendChild(aCen);
+    function revealNext(i){
+      if(i+1<REQS.length){
+        reqEls[i+1].classList.remove("req-pending");
+        reqEls[i+1].classList.add("req-active");
+        setTimeout(()=>reqEls[i+1].scrollIntoView({behavior:"smooth",block:"nearest"}),80);
+      } else {
+        dataSec.style.display="";
+        setTimeout(()=>dataSec.scrollIntoView({behavior:"smooth",block:"nearest"}),80);
+      }
+    }
 
-    const cenWrap=document.createElement("div");cenWrap.className="doc-chk-row";
-    cenWrap.appendChild(chkCenat);
-    const cenBody=document.createElement("div");cenBody.className="doc-chk-lbl";
-    cenBody.innerHTML="<strong>2. Certificado CENAT</strong><small>Certificado Nacional de Antecedentes de Tránsito. Se obtiene y paga online.</small>";
-    cenBody.appendChild(cenatAct);cenWrap.appendChild(cenBody);
-    docSec.appendChild(cenWrap);
+    REQS.forEach((req,i)=>{
+      const el=document.createElement("div");
+      el.className="req-item "+(i===0?"req-active":"req-pending");
 
-    const libAct=document.createElement("div");libAct.style.marginTop="8px";
-    const aLib=document.createElement("a");aLib.href=`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${encodeURIComponent("Hola, necesito el libre de multas para licencia de conducir.")}`;aLib.target="_blank";aLib.rel="noopener";aLib.className="cta-btn cw";aLib.textContent="Solicitar libre de multas por WhatsApp";
-    aLib.addEventListener("click",()=>{chkLibre.checked=true;upd();});
-    libAct.appendChild(aLib);
+      const hd=document.createElement("div");hd.className="req-hd";
+      const chkIc=document.createElement("div");chkIc.className="req-chk-icon";
+      chkIc.innerHTML=`<svg viewBox="0 0 12 10" width="12" height="10"><path d="M1 5l3.5 3.5L11 1" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+      const bod=document.createElement("div");bod.style.flex="1";
+      bod.innerHTML=`<div class="rbody"><strong>${i+1}. ${req.title}</strong><small>${req.desc}</small></div>`;
+      hd.appendChild(chkIc);hd.appendChild(bod);
+      el.appendChild(hd);
 
-    const libWrap=document.createElement("div");libWrap.className="doc-chk-row";
-    libWrap.appendChild(chkLibre);
-    const libBody=document.createElement("div");libBody.className="doc-chk-lbl";
-    libBody.innerHTML="<strong>3. Libre de multas municipal</strong><small>Verificamos que no tenés sanciones firmes pendientes (Art. 23 inc. g, Ley 13.133).</small>";
-    libBody.appendChild(libAct);libWrap.appendChild(libBody);
-    docSec.appendChild(libWrap);
-
-    const pdfAct=document.createElement("div");pdfAct.style.marginTop="8px";
-    const aPdf=document.createElement("a");aPdf.href="#";aPdf.className="cta-btn cr";aPdf.textContent="Descargar Declaración Jurada (PDF)";
-    aPdf.addEventListener("click",e=>{e.preventDefault();chkPdf.checked=true;upd();});
-    pdfAct.appendChild(aPdf);
-
-    const pdfWrap=document.createElement("div");pdfWrap.className="doc-chk-row";
-    pdfWrap.appendChild(chkPdf);
-    const pdfBody=document.createElement("div");pdfBody.className="doc-chk-lbl";
-    pdfBody.innerHTML="<strong>4. Declaración Jurada de Salud</strong><small>Declarás bajo juramento tus aptitudes psicofísicas (Art. 23 inc. c, Ley 13.133).</small>";
-    pdfBody.appendChild(pdfAct);pdfWrap.appendChild(pdfBody);
-    docSec.appendChild(pdfWrap);
+      const actWrap=document.createElement("div");actWrap.className="req-act";
+      if(req.action){
+        const a=document.createElement("a");a.href=req.action.href;
+        if(req.action.blank){a.target="_blank";a.rel="noopener";}
+        a.className=`cta-btn ${req.action.cls}`;a.textContent=req.action.label;
+        if(!req.action.blank)a.addEventListener("click",e=>e.preventDefault());
+        actWrap.appendChild(a);
+      }
+      const loBtn=document.createElement("button");
+      loBtn.type="button";loBtn.className="req-lotengo";
+      loBtn.innerHTML=`<svg viewBox="0 0 12 10" width="11" height="11" style="margin-right:5px"><path d="M1 5l3.5 3.5L11 1" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>Lo tengo`;
+      loBtn.onclick=()=>{
+        checkedCount[i]=true;
+        el.classList.add("req-done");
+        el.classList.remove("req-active");
+        upd();
+        revealNext(i);
+      };
+      actWrap.appendChild(loBtn);
+      el.appendChild(actWrap);
+      reqEls.push(el);
+      docSec.appendChild(el);
+    });
 
     root.appendChild(docSec);
 
+    /* ── Summary + data confirm (hidden until all reqs done) ── */
+    const dataSec=document.createElement("div");dataSec.style.display="none";
+
     const sumSec=document.createElement("div");sumSec.className="sum-section";
-    sumSec.innerHTML="<h4>Resumen del trámite</h4>";
+    sumSec.innerHTML="<h4>Corrobora tus datos</h4>";
     const sc=document.createElement("div");sc.className="sc";sc.style.marginTop="6px";
     sc.innerHTML=`
       <div class="sr"><span>DNI</span><span>${S.dni||"—"}</span></div>
@@ -1101,21 +1309,26 @@ async function paso5_requisitos(){
       w.textContent="La vigencia de las nuevas subclases se alineará al vencimiento de tu licencia actual (Art. 28, Ley 13.133).";
       sumSec.appendChild(w);
     }
-    root.appendChild(sumSec);
+    dataSec.appendChild(sumSec);
 
     const datosP=document.createElement("div");datosP.style.marginTop="14px";
     datosP.innerHTML="<strong>¿Son correctos estos datos?</strong>";
-    root.appendChild(datosP);
+    dataSec.appendChild(datosP);
     const datosBtns=document.createElement("div");datosBtns.style.cssText="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap";
     const bDatSi=document.createElement("button");bDatSi.type="button";bDatSi.className="opt-btn";bDatSi.style.flex="1";bDatSi.style.minWidth="120px";
     bDatSi.innerHTML=`<span class="ic">✓</span><div class="ol"><span class="lbl">Sí</span></div>`;
     const bDatNo=document.createElement("button");bDatNo.type="button";bDatNo.className="opt-btn";bDatNo.style.flex="1";bDatNo.style.minWidth="120px";
     bDatNo.innerHTML=`<span class="ic">✗</span><div class="ol"><span class="lbl">No</span><span class="sub">Volver a ingresar</span></div>`;
+    function allOk(){return checkedCount.every(Boolean)&&datosOk===true;}
+    function upd(){}
     bDatSi.onclick=()=>{
       datosOk=true;
       bDatSi.classList.add("sel");
       bDatNo.classList.remove("sel");
-      upd();
+      if(allOk()){
+        addUser("Sí, son correctos");
+        paso5b_preTurno({});
+      }
     };
     bDatNo.onclick=()=>{
       datosOk=false;
@@ -1124,25 +1337,10 @@ async function paso5_requisitos(){
       paso2_nac_corregir();
     };
     datosBtns.appendChild(bDatSi);datosBtns.appendChild(bDatNo);
-    root.appendChild(datosBtns);
+    dataSec.appendChild(datosBtns);
+    bindEnterDocContinuar(dataSec,{classList:{contains:()=>allOk()},click:()=>{if(allOk()){addUser("Sí, son correctos");paso5b_preTurno({});}}});
 
-    const go=document.createElement("button");
-    go.type="button";go.className="cbtn-confirm";go.style.marginTop="14px";go.textContent="Continuar";
-
-    function allOk(){
-      return chkCenat.checked&&chkLibre.checked&&chkPdf.checked&&datosOk===true;
-    }
-    function upd(){
-      if(allOk()){go.classList.add("on");go.style.opacity="1";go.style.pointerEvents="all";}
-      else{go.classList.remove("on");go.style.opacity=".32";go.style.pointerEvents="none";}
-    }
-    [chkCenat,chkLibre,chkPdf].forEach(c=>c.addEventListener("change",upd));
-    upd();
-
-    go.onclick=()=>{if(!allOk())return;addUser("Continuar");paso5b_preTurno({});};
-    root.appendChild(go);
-    bindEnterDocContinuar(root,go);
-
+    root.appendChild(dataSec);
     opts.appendChild(root);
     opts.scrollIntoView({behavior:"smooth",block:"end"});
   },400);
@@ -1182,6 +1380,51 @@ function buildTurnero(){
   }
   return `<div class="tc"><div class="ti">📋</div><h3>Turno — Examen teórico-práctico</h3><p>Para tu trámite de ${S.tipo==="renovacion_ampliacion"?"ampliación":"alta"} el primer paso es el examen teórico-práctico.</p>
   <a href="#" onclick="alert('Aquí se abrirá el turnero de examen teórico-práctico')" class="cta-btn cg" style="width:100%;justify-content:center;font-size:13px;padding:10px;">Sacar turno — Examen teórico-práctico</a></div>`;
+}
+
+async function paso7_feedback(){
+  setProg(5);
+  await addBot(`Gracias por usar el asistente. ¿Te resultó útil?`);
+  pickOne([
+    {icon:"😊",label:"Muy útil"},
+    {icon:"😐",label:"Más o menos útil"},
+    {icon:"😕",label:"Poco útil"}
+  ],(it,idx)=>{
+    addUser(it.label);
+    paso7_feedback_detalle(idx);
+  },()=>paso5b_preTurno({silent:true}),"Volver");
+}
+
+async function paso7_feedback_detalle(rating){
+  const preguntas=[
+    "¿Qué fue lo que más te gustó o por qué te sirvió?",
+    "¿Qué cambiarías o mejorarías?",
+    "¿Qué cambiarías o qué te faltó?"
+  ];
+  await addBot(preguntas[rating]);
+  clearOpts();
+  addBack(()=>paso7_feedback(),"Volver");
+  const ta=document.createElement("textarea");
+  ta.placeholder="Escribí tu comentario (opcional)";
+  ta.style.cssText="width:100%;min-height:80px;font-size:13px;padding:9px 10px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-family:inherit;resize:vertical;margin-top:6px";
+  opts.appendChild(ta);
+
+  const btn=makeConfirmBtn("Enviar comentario");
+  activateBtn(btn,"Enviar comentario");
+  btn.onclick=()=>{
+    const txt=ta.value.trim();
+    if(txt)addUser(txt);
+    else addUser("(sin comentario)");
+    void (async()=>{
+      await addBot("¡Gracias por tu feedback! Vamos a usarlo para mejorar.");
+      clearOpts();
+      const b=document.createElement("button");b.className="opt-btn";
+      b.innerHTML=`<span class="ic">↺</span><div class="ol"><span class="lbl">Iniciar un trámite nuevo</span></div>`;
+      b.onclick=reiniciar;opts.appendChild(b);
+    })();
+  };
+  opts.appendChild(btn);
+  opts.scrollIntoView({behavior:"smooth",block:"end"});
 }
 
 function reiniciar(){
