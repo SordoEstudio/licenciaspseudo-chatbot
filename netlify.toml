@@ -1,0 +1,8 @@
+[build]
+  publish = "."
+
+# La URL raíz del sitio lleva directo al chatbot (sin build)
+[[redirects]]
+  from = "/"
+  to = "/chatbot_licencia_sv_v6.html"
+  status = 302

@@ -1,0 +1,9 @@
+{
+  "name": "licenciaspseudo-chatbot",
+  "private": true,
+  "description": "Pseudo chatbot / formulario inteligente — prueba local y Netlify",
+  "scripts": {
+    "dev": "npx --yes serve . -l 5173",
+    "start": "npm run dev"
+  }
+}

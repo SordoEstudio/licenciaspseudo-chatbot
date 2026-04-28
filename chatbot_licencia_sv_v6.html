@@ -1,0 +1,1074 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asistente Licencia — San Vicente (prueba)</title>
+  <style>
+    /* Tema standalone (si se embebe en otra página, el host puede sobreescribir estas variables) */
+    :root {
+      --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      --color-text-primary: #0f172a;
+      --color-text-secondary: #64748b;
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f8fafc;
+      --color-border-secondary: #e2e8f0;
+      --color-border-tertiary: #e2e8f0;
+      --border-radius-md: 8px;
+      --border-radius-lg: 12px;
+    }
+    body {
+      background: #f1f5f9;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0 12px;
+    }
+  </style>
+</head>
+<body>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:transparent}
+#cw{font-family:var(--font-sans,sans-serif);max-width:620px;margin:0 auto;padding:1.5rem 0 2rem}
+#hdr{display:flex;align-items:center;gap:12px;padding-bottom:1.25rem;border-bottom:.5px solid var(--color-border-tertiary);margin-bottom:1rem}
+#hdr .logo{width:38px;height:38px;border-radius:var(--border-radius-md);background:#1a4fa0;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#hdr .logo svg{width:20px;height:20px;fill:white}
+#hdr h1{font-size:15px;font-weight:500;color:var(--color-text-primary);line-height:1.3}
+#hdr p{font-size:12px;color:var(--color-text-secondary);margin-top:1px}
+#msgs{display:flex;flex-direction:column;gap:12px}
+.msg{display:flex;align-items:flex-start;gap:10px}
+.msg.user{flex-direction:row-reverse}
+.bubble{max-width:90%;padding:10px 14px;border-radius:var(--border-radius-lg);font-size:14px;line-height:1.65;color:var(--color-text-primary)}
+.bot .bubble{background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:4px var(--border-radius-lg) var(--border-radius-lg) var(--border-radius-lg)}
+.user .bubble{background:#e6f1fb;border:.5px solid #b5d4f4;color:#042c53;border-radius:var(--border-radius-lg) 4px var(--border-radius-lg) var(--border-radius-lg)}
+.av{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;margin-top:2px}
+.bot .av{background:#1a4fa0;color:white}
+.user .av{background:#b5d4f4;color:#042c53}
+#opts{margin-top:12px}
+/* progress */
+.pbar{display:flex;gap:4px;margin-bottom:1rem}
+.ps{flex:1;height:3px;border-radius:2px;background:var(--color-border-tertiary);transition:background .3s}
+.ps.on{background:#1a4fa0}.ps.dn{background:#0f6e56}
+/* back */
+.back-btn{background:transparent;border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:7px 12px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:10px;transition:background .12s;width:fit-content}
+.back-btn:hover{background:var(--color-background-secondary)}
+/* confirm btn */
+.cbtn-confirm{background:#1a4fa0;color:white;border:none;border-radius:var(--border-radius-md);padding:10px 16px;font-size:13px;cursor:pointer;width:100%;font-weight:500;opacity:.32;pointer-events:none;transition:opacity .2s;margin-top:8px;display:block}
+.cbtn-confirm.on{opacity:1;pointer-events:all}
+.cbtn-confirm.on:hover{opacity:.9}
+/* single-select buttons */
+.opt-btn{background:var(--color-background-primary);border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:10px 14px;font-size:13px;color:var(--color-text-primary);cursor:pointer;text-align:left;display:flex;align-items:flex-start;gap:8px;margin-bottom:6px;width:100%;transition:background .12s,border-color .12s}
+.opt-btn:hover{background:var(--color-background-secondary);border-color:#1a4fa0}
+.opt-btn.sel{background:#e6f1fb;border-color:#1a4fa0;border-width:1.5px}
+.opt-btn.sel .lbl{color:#0c447c;font-weight:500}
+.opt-btn.dim{opacity:.42;cursor:not-allowed}
+.opt-btn .ic{font-size:13px;width:18px;flex-shrink:0;margin-top:1px}
+.opt-btn .ol{display:flex;flex-direction:column;gap:1px;flex:1}
+.opt-btn .lbl{font-size:13px;color:var(--color-text-primary)}
+.opt-btn .sub{font-size:11px;color:var(--color-text-secondary)}
+/* badges */
+.badge{font-size:11px;padding:2px 8px;border-radius:20px;font-weight:500;display:inline-block;margin-bottom:6px}
+.bi{background:#e6f1fb;color:#0c447c}.bo{background:#e1f5ee;color:#085041}.bw{background:#faeeda;color:#633806}
+/* boxes */
+.ibox{background:#e6f1fb;border:.5px solid #b5d4f4;border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;color:#0c447c;margin-top:8px;line-height:1.5}
+.wbox{background:#faeeda;border:.5px solid #fac775;border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;color:#633806;margin-top:8px}
+.gbox{background:#e1f5ee;border:.5px solid #9fe1cb;border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;color:#085041;margin-top:8px}
+/* inputs */
+input[type=date],select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);display:block;margin-top:6px}
+.err{color:#a32d2d;font-size:12px;margin-top:4px;display:none}
+/* typing */
+.typing{display:flex;gap:4px;align-items:center;padding:10px 14px}
+.typing span{width:6px;height:6px;border-radius:50%;background:var(--color-text-secondary);animation:bl 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes bl{0%,80%,100%{opacity:.3}40%{opacity:1}}
+/* ── Collapsible subclass selector ── */
+.clase-block{border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);margin-bottom:8px;overflow:hidden}
+.clase-toggle{display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;background:var(--color-background-primary);user-select:none;transition:background .12s}
+.clase-toggle:hover{background:var(--color-background-secondary)}
+.clase-toggle.has-sel{background:#e6f1fb}
+.clase-toggle .ct-ic{font-size:16px;flex-shrink:0}
+.clase-toggle .ct-info{flex:1}
+.clase-toggle .ct-name{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.clase-toggle.has-sel .ct-name{color:#0c447c}
+.clase-toggle .ct-sub{font-size:11px;color:var(--color-text-secondary);margin-top:1px}
+.clase-toggle .ct-arrow{font-size:11px;color:var(--color-text-secondary);transition:transform .2s;flex-shrink:0}
+.clase-toggle.open .ct-arrow{transform:rotate(90deg)}
+.clase-subs{display:none;border-top:.5px solid var(--color-border-tertiary)}
+.clase-subs.open{display:block}
+.sub-row{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;border-bottom:.5px solid var(--color-border-tertiary);cursor:pointer;transition:background .1s;background:var(--color-background-primary)}
+.sub-row:last-child{border-bottom:none}
+.sub-row:hover:not(.age-dim):not(.inc-row):not(.lock-row){background:var(--color-background-secondary)}
+.sub-row.sel-row{background:#e6f1fb}
+.sub-row.inc-row{background:#f1f5f9;cursor:default;border-left:3px solid #cbd5e1}
+.sub-row.inc-row .sub-name{color:#64748b;font-weight:500}
+.sub-row.inc-row .sub-desc{color:#94a3b8}
+.sub-row.inc-row .chk{background:#cbd5e1;border-color:#cbd5e1}
+.sub-row.lock-row{background:#f8fafc;cursor:default;opacity:.85;border-left:3px solid #e2e8f0}
+.sub-row.lock-row .sub-name{color:#64748b}
+.sub-row.lock-row .sub-desc{font-size:10px;color:#94a3b8;margin-top:2px}
+.sub-row.lock-row .chk-ic{display:none!important}
+.sub-row.age-dim{opacity:.38;cursor:not-allowed}
+.chk{width:18px;height:18px;border-radius:4px;border:1.5px solid var(--color-border-secondary);flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.sel-row .chk{background:#1a4fa0;border-color:#1a4fa0}
+.inc-row .chk{background:#cbd5e1;border-color:#cbd5e1}
+.chk-ic{width:11px;height:11px;display:none}
+.sel-row .chk-ic,.inc-row .chk-ic{display:block}
+.sub-body{flex:1}
+.sub-name{font-size:13px;color:var(--color-text-primary);line-height:1.3}
+.sel-row .sub-name{color:#0c447c;font-weight:500}
+.sel-row .chk-ic path{stroke:#fff!important}
+.sub-row.inc-row .chk-ic path{stroke:#64748b!important}
+.sub-desc{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.pill{font-size:10px;padding:1px 6px;border-radius:10px;margin-top:3px;display:inline-block;border:.5px solid}
+.pill-age{background:#fcebeb;color:#791f1f;border-color:#f7c1c1}
+/* req list */
+.rlist{list-style:none;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.ritem{border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);overflow:hidden}
+.rhead{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--color-background-primary)}
+.rnum{background:#1a4fa0;color:white;font-size:10px;font-weight:500;border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rbody{font-size:13px;color:var(--color-text-primary);flex:1;line-height:1.4}
+.rbody small{display:block;color:var(--color-text-secondary);font-size:12px;margin-top:2px}
+.ract{padding:8px 12px;border-top:.5px solid var(--color-border-tertiary);background:var(--color-background-secondary)}
+.cta-btn{padding:8px 13px;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:5px;border:.5px solid;font-weight:500}
+.cp{background:#1a4fa0;color:white;border-color:#1a4fa0}
+.cs{background:var(--color-background-primary);color:#1a4fa0;border-color:#b5d4f4}
+.cg{background:#0f6e56;color:white;border-color:#0f6e56}
+.cw{background:#25d366;color:white;border-color:#25d366}
+.cr{background:#a32d2d;color:white;border-color:#a32d2d}
+/* summary card */
+.sc{background:var(--color-background-primary);border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:14px 16px;margin-top:8px}
+.sr{display:flex;justify-content:space-between;font-size:13px;padding:5px 0;border-bottom:.5px solid var(--color-border-tertiary);gap:12px}
+.sr:last-child{border-bottom:none}
+.sr span:first-child{color:var(--color-text-secondary);flex-shrink:0}
+.sr span:last-child{font-weight:500;color:var(--color-text-primary);text-align:right}
+/* turnero */
+.tc{border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-lg);padding:14px;text-align:center;background:var(--color-background-primary);margin-top:8px}
+.tc .ti{font-size:26px;margin-bottom:5px}
+.tc h3{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.tc p{font-size:12px;color:var(--color-text-secondary);margin-bottom:10px;line-height:1.4}
+/* sel summary tags */
+.sel-tags{margin-top:6px;display:flex;flex-wrap:wrap;gap:4px}
+.stag{font-size:12px;padding:3px 10px;border-radius:20px;background:#e6f1fb;color:#0c447c;border:.5px solid #b5d4f4}
+.stag.prof{background:#faeeda;color:#633806;border-color:#fac775}
+/* doc checklist */
+.doc-section{margin-top:10px}
+.doc-section>h4{font-size:13px;font-weight:600;color:var(--color-text-primary);margin-bottom:8px}
+.doc-chk-row{display:flex;align-items:flex-start;gap:10px;margin-top:8px;padding:8px 0;border-top:.5px solid var(--color-border-tertiary)}
+.doc-chk-row:first-of-type{border-top:none}
+.doc-chk-row input[type=checkbox]{width:18px;height:18px;margin-top:2px;flex-shrink:0;accent-color:#1a4fa0;cursor:pointer}
+.doc-chk-row .doc-chk-lbl{flex:1;font-size:13px;line-height:1.45}
+.doc-chk-row .doc-chk-lbl small{display:block;color:var(--color-text-secondary);font-size:12px;margin-top:2px}
+.sum-section{margin-top:16px;padding-top:12px;border-top:.5px solid var(--color-border-tertiary)}
+.sum-section>h4{font-size:13px;font-weight:600;margin-bottom:8px}
+.chk-datos{display:flex;align-items:flex-start;gap:10px;margin-top:14px;padding:10px 12px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);border:.5px solid var(--color-border-tertiary)}
+.chk-datos input{margin-top:2px;accent-color:#1a4fa0}
+.dni-inp{width:100%;font-size:15px;padding:10px 12px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);letter-spacing:.05em}
+.export-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.export-row .cta-btn,.export-row .opt-btn{flex:1;min-width:140px;justify-content:center}
+.export-mail{width:100%;margin-top:12px;display:flex;flex-direction:column;gap:8px}
+.export-mail label{font-size:12px;color:var(--color-text-secondary)}
+.export-mail input[type=email]{width:100%;font-size:14px;padding:10px 12px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md)}
+.clase-block.prof-block-locked .clase-toggle{pointer-events:none;cursor:not-allowed;opacity:.62}
+.clase-block.prof-block-locked .clase-toggle .ct-arrow{opacity:.45}
+.fin-deriv .tc{text-align:left}
+.fin-deriv .tc p{font-size:13px;line-height:1.5}
+</style>
+
+<div id="cw">
+  <div id="hdr">
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 3a3 3 0 110 6 3 3 0 010-6zm5 12H7v-.6c0-2.2 3.3-3.4 5-3.4s5 1.2 5 3.4v.6z"/></svg></div>
+    <div><h1>Asistente de Licencia de Conducir</h1><p>Municipalidad de San Vicente · Santa Fe</p></div>
+  </div>
+  <div class="pbar" id="pbar">
+    <div class="ps" id="ps0"></div><div class="ps" id="ps1"></div><div class="ps" id="ps2"></div>
+    <div class="ps" id="ps3"></div><div class="ps" id="ps4"></div><div class="ps" id="ps5"></div>
+  </div>
+  <div id="msgs"></div>
+  <div id="opts"></div>
+</div>
+
+<script>
+/* finContacto: "wa" | "mail" — canal para enviar el resumen al municipio (solo localidades propio:false)
+   Si omitís finContacto: usa WhatsApp si hay wsp, si no mail. */
+/* WhatsApp municipal (Argentina): 54 + 9 + código + número → 5493492646942 */
+const CONTACTO_WHATSAPP_SV="5493492646942";
+
+const LOCS={
+  "San Vicente":{propio:true,wsp:CONTACTO_WHATSAPP_SV,mail:null},
+  "Angélica":{propio:false,wsp:"5493406000001",mail:"tramites@angelica.gob.ar",finContacto:"wa"},
+  "Plaza Clucellas":{propio:false,wsp:"5493406000002",mail:"consultas@plazaclucellas.gob.ar",finContacto:"wa"},
+  "Colonia Margarita":{propio:false,wsp:"5493406000003",mail:"municipio@coloniamargarita.gob.ar",finContacto:"mail"},
+  "Colonia Iturraspe":{propio:false,wsp:"5493406000004",mail:"info@coloniaiturraspe.gob.ar",finContacto:"wa"}
+};
+
+/* includes = subclases que quedan automáticamente incluidas si se elige esta */
+const SUBS=[
+  {cod:"A.1.1",label:"A.1.1 — Ciclomotores hasta 50cc / 4kw eléctrico",desc:"Particular",edad:16,prof:false,inc:[],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"A.1.2",label:"A.1.2 — Motos hasta 150cc / 11kw eléctrico",desc:"Particular",edad:17,prof:false,inc:["A.1.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"A.1.3",label:"A.1.3 — Motos 150–300cc / 11–20kw eléctrico",desc:"Particular",edad:19,prof:false,inc:["A.1.2","A.1.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"A.1.4",label:"A.1.4 — Motos más de 300cc / más de 20kw eléctrico",desc:"Particular",edad:21,prof:false,inc:["A.1.3","A.1.2","A.1.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"A.2.1",label:"A.2.1 — Triciclos/cuatriciclos sin cabina hasta 300cc",desc:"Particular",edad:17,prof:false,inc:[],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"A.2.2",label:"A.2.2 — Triciclos/cuatriciclos sin cabina más de 300cc",desc:"Particular",edad:19,prof:false,inc:["A.2.1"],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"A.3",  label:"A.3 — Triciclos/cuatriciclos cabinados (volante)",desc:"Particular",edad:17,prof:false,inc:[],grupo:"A",gLabel:"Clase A — Motovehículos",ic:"🏍"},
+  {cod:"B.1",label:"B.1 — Autos y camionetas hasta 3.500 kg",desc:"Particular",edad:17,prof:false,inc:[],grupo:"B",gLabel:"Clase B — Automóviles particulares",ic:"🚗"},
+  {cod:"B.2",label:"B.2 — Autos con acoplado liviano",desc:"Particular",edad:18,prof:false,inc:["B.1"],grupo:"B",gLabel:"Clase B — Automóviles particulares",ic:"🚗"},
+  {cod:"C.1",label:"C.1 — Camiones sin acoplado",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"C",gLabel:"Clase C — Camiones y carga",ic:"🚛"},
+  {cod:"C.2",label:"C.2 — Camiones con acoplado o semirremolque",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"C",gLabel:"Clase C — Camiones y carga",ic:"🚛"},
+  {cod:"C.3",label:"C.3 — Camiones articulados (más de 2 ejes)",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"C",gLabel:"Clase C — Camiones y carga",ic:"🚛"},
+  {cod:"D.1",label:"D.1 — Hasta 8 pasajeros (remis, taxi, transporte privado)",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
+  {cod:"D.2",label:"D.2 — 9 a 20 pasajeros",desc:"Profesional",edad:21,prof:true,inc:["B.1"],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
+  {cod:"D.3",label:"D.3 — Más de 20 pasajeros / colectivos",desc:"Profesional",edad:21,prof:true,inc:["D.2","B.1"],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
+  {cod:"D.4",label:"D.4 — Urgencia y emergencia",desc:"Profesional — debe acompañarse de otra subclase",edad:21,prof:true,inc:[],grupo:"D",gLabel:"Clase D — Transporte de pasajeros",ic:"🚌"},
+  {cod:"E.1",label:"E.1 — Veh. clase C o D con remolques/articulaciones",desc:"Profesional",edad:21,prof:true,inc:["B.2","B.1"],grupo:"E",gLabel:"Clase E — Maquinaria y articulados",ic:"⚙"},
+  {cod:"E.2",label:"E.2 — Maquinaria especial no agrícola",desc:"Profesional",edad:21,prof:true,inc:[],grupo:"E",gLabel:"Clase E — Maquinaria y articulados",ic:"⚙"},
+];
+
+function getIncluidas(selSet){
+  const r=new Set();
+  selSet.forEach(c=>{const s=SUBS.find(x=>x.cod===c);if(s)s.inc.forEach(i=>r.add(i));});
+  return r;
+}
+
+let S={dni:"",localidad:"",tramiteLocal:true,nac:null,edad:0,tipo:"",licActuales:[],subclases:[],selUsuario:[],esProf:false,modoPostLic:null,skipReselectSubs:false};
+const msgs=document.getElementById("msgs"),opts=document.getElementById("opts");
+
+function setProg(n){for(let i=0;i<6;i++){const e=document.getElementById("ps"+i);e.className="ps"+(i<n?" dn":i===n?" on":"");}}
+function calcEdad(d){const h=new Date(),n=new Date(d);let a=h.getFullYear()-n.getFullYear();const m=h.getMonth()-n.getMonth();if(m<0||(m===0&&h.getDate()<n.getDate()))a--;return a;}
+/** Fechas en pantalla y en el resumen: dd mm aaaa (desde ISO yyyy-mm-dd). */
+function fmtFechaDMY(iso){
+  if(!iso)return "—";
+  const p=String(iso).split("-");
+  if(p.length<3)return "—";
+  const [y,m,d]=p;
+  if(!y||!m||!d)return "—";
+  return `${String(d).padStart(2,"0")} ${String(m).padStart(2,"0")} ${y}`;
+}
+function fmtFechaHoraAhora(){
+  const n=new Date();
+  const d=String(n.getDate()).padStart(2,"0");
+  const mo=String(n.getMonth()+1).padStart(2,"0");
+  const y=n.getFullYear();
+  const hh=String(n.getHours()).padStart(2,"0");
+  const mm=String(n.getMinutes()).padStart(2,"0");
+  return `${d} ${mo} ${y}, ${hh}:${mm}`;
+}
+function addUser(t){const d=document.createElement("div");d.className="msg user";d.innerHTML=`<div class="av">Vos</div><div class="bubble">${t}</div>`;msgs.appendChild(d);d.scrollIntoView({behavior:"smooth",block:"end"});}
+function addBot(html,delay=0){return new Promise(res=>{setTimeout(()=>{const t=document.createElement("div");t.className="msg bot";t.innerHTML=`<div class="av">SV</div><div class="bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;msgs.appendChild(t);t.scrollIntoView({behavior:"smooth",block:"end"});setTimeout(()=>{t.remove();const d=document.createElement("div");d.className="msg bot";d.innerHTML=`<div class="av">SV</div><div class="bubble">${html}</div>`;msgs.appendChild(d);d.scrollIntoView({behavior:"smooth",block:"end"});res();},480);},delay);});}
+function clearOpts(){opts.innerHTML="";}
+function addBack(fn,lbl="Volver al paso anterior"){const b=document.createElement("button");b.className="back-btn";b.innerHTML=`← ${lbl}`;b.onclick=()=>{clearOpts();fn();};opts.appendChild(b);}
+
+/* ── Confirm button helper ── */
+function makeConfirmBtn(label){
+  const b=document.createElement("button");b.className="cbtn-confirm";b.textContent=label;return b;
+}
+function activateBtn(b,label){b.classList.add("on");if(label)b.textContent=label;}
+
+/* ── Una opción = un tap (sin paso Confirmar intermedio) ── */
+function pickOne(items,onPick,backFn,backLbl){
+  clearOpts();if(backFn)addBack(backFn,backLbl||"Volver");
+  items.forEach((item,i)=>{
+    const b=document.createElement("button");b.className="opt-btn"+(item.dim?" dim":"");
+    b.innerHTML=`<span class="ic">${item.icon||"›"}</span><div class="ol"><span class="lbl">${item.label}</span>${item.sub?`<span class="sub">${item.sub}</span>`:""}</div>`;
+    if(!item.dim)b.onclick=()=>onPick(item,i);
+    opts.appendChild(b);
+  });
+  opts.scrollIntoView({behavior:"smooth",block:"end"});
+}
+
+/* ── Date input + confirmación explícita ── */
+function showDate(hint,backFn,onConfirm,savedVal,cfg){
+  const mode=(cfg&&cfg.mode)||"nacimiento";
+  clearOpts();if(backFn)addBack(backFn);
+  if(hint){const hintEl=document.createElement("p");hintEl.className="sub-desc";hintEl.style.marginBottom="8px";hintEl.style.color="var(--color-text-secondary)";hintEl.textContent=hint;opts.appendChild(hintEl);}
+  const inp=document.createElement("input");inp.type="date";
+  if(mode==="nacimiento")inp.max=new Date().toISOString().split("T")[0];
+  if(savedVal)inp.value=savedVal;
+  const err=document.createElement("p");err.className="err";
+  const btn=makeConfirmBtn(mode==="nacimiento"?"Confirmar fecha de nacimiento":"Confirmar fecha de vencimiento");
+  function syncBtn(){
+    if(!inp.value){btn.classList.remove("on");return;}
+    if(mode==="nacimiento"){
+      const ed=calcEdad(inp.value);
+      if(ed<16){err.textContent=`Tenés ${ed} años. La edad mínima es 16 años.`;err.style.display="block";btn.classList.remove("on");return;}
+      err.style.display="none";
+    } else err.style.display="none";
+    activateBtn(btn,mode==="nacimiento"?"Confirmar fecha de nacimiento":"Confirmar fecha de vencimiento");
+  }
+  inp.addEventListener("change",syncBtn);
+  if(savedVal)syncBtn();
+  btn.onclick=()=>{
+    if(!inp.value)return;
+    if(mode==="nacimiento"){
+      const ed=calcEdad(inp.value);
+      if(ed<16){err.textContent=`Tenés ${ed} años. La edad mínima es 16 años.`;err.style.display="block";return;}
+    }
+    err.style.display="none";
+    onConfirm(inp.value);
+  };
+  opts.appendChild(inp);opts.appendChild(err);opts.appendChild(btn);
+  opts.scrollIntoView({behavior:"smooth",block:"end"});
+}
+
+function showDni(backFn){
+  clearOpts();if(backFn)addBack(backFn);
+  const hint=document.createElement("p");hint.className="sub-desc";hint.style.marginBottom="8px";hint.style.color="var(--color-text-secondary)";
+  hint.textContent="Ingresá el número de tu DNI (solo números, sin puntos).";
+  const inp=document.createElement("input");inp.type="text";inp.className="dni-inp";inp.inputMode="numeric";inp.autocomplete="off";inp.maxLength=10;inp.placeholder="Ej.: 38123456";
+  if(S.dni)inp.value=S.dni;
+  const err=document.createElement("p");err.className="err";
+  const btn=makeConfirmBtn("Confirmar DNI");
+  function norm(v){return v.replace(/\D/g,"");}
+  function syncBtn(){
+    const n=norm(inp.value);
+    if(n.length>=7&&n.length<=9){activateBtn(btn,"Confirmar DNI");err.style.display="none";}
+    else btn.classList.remove("on");
+  }
+  inp.addEventListener("input",()=>{inp.value=norm(inp.value);syncBtn();});
+  if(S.dni)syncBtn();
+  btn.onclick=()=>{
+    const n=norm(inp.value);
+    if(n.length<7||n.length>9){err.textContent="Ingresá un DNI válido (7 a 9 dígitos).";err.style.display="block";return;}
+    S.dni=n;addUser(`DNI: ${n}`);paso1_loc();
+  };
+  opts.appendChild(hint);opts.appendChild(inp);opts.appendChild(err);opts.appendChild(btn);
+  opts.scrollIntoView({behavior:"smooth",block:"end"});
+}
+
+/* ── Select — confirma al elegir opción (sin segundo botón) ── */
+function showSelect(optsList,placeholder,backFn,onConfirm,savedVal){
+  clearOpts();if(backFn)addBack(backFn);
+  const sel=document.createElement("select");sel.className="fsel";
+  sel.innerHTML=`<option value="">— ${placeholder} —</option>`+optsList.map(o=>`<option value="${o}">${o}</option>`).join("");
+  if(savedVal)sel.value=savedVal;
+  sel.onchange=()=>{if(sel.value)onConfirm(sel.value);};
+  opts.appendChild(sel);
+  opts.scrollIntoView({behavior:"smooth",block:"end"});
+}
+
+/* ══ COLLAPSIBLE MULTI-SELECT SUBCLASS SELECTOR ══
+   cfg.yaTiene = códigos ya en licencia (solo modo ampliación): fila bloqueada, tono gris
+   cfg.ocultarFueraEdad = true: solo lista subclases permitidas por edad (ej. licencias actuales); sin aviso prof tras B */
+function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
+  cfg=cfg||{};
+  const yaTiene=new Set(cfg.yaTiene||[]);
+  clearOpts();if(backFn)addBack(backFn);
+  const preselF=(presel||[]).filter(c=>{
+    const sc=SUBS.find(s=>s.cod===c);
+    if(!sc)return false;
+    if(cfg.ocultarFueraEdad)return edad>=sc.edad||yaTiene.has(c);
+    return true;
+  });
+  const selSet=new Set(preselF.filter(c=>!yaTiene.has(c)));
+  const grupos=["A","B","C","D","E"];
+  const rowMap={};
+  const blockRefs=[];
+  const blocksByGrupo={};
+  const wrap=document.createElement("div");
+
+  const nota=document.createElement("div");nota.className="ibox";nota.style.marginBottom="10px";
+  nota.innerHTML=cfg.notaHtml||(yaTiene.size
+    ?"Marcá solo las <strong>nuevas</strong> subclases que querés agregar. Las que ya tenés aparecen como referencia."
+    :"Seleccioná una o más subclases. Podés combinar clases (ej: A.1.2 y B.1). Las incluidas automáticamente por tu elección se muestran en gris.");
+  wrap.appendChild(nota);
+
+  function closeOtherBlocks(exceptBlock){
+    blockRefs.forEach(({block,subsDiv,tog})=>{
+      if(block!==exceptBlock){
+        subsDiv.classList.remove("open");
+        tog.classList.remove("open");
+      }
+    });
+  }
+
+  function appendGrupo(g){
+    const subsAll=SUBS.filter(s=>s.grupo===g);
+    const subs=cfg.ocultarFueraEdad
+      ?subsAll.filter(sc=>edad>=sc.edad||yaTiene.has(sc.cod))
+      :subsAll;
+    if(!subs.length)return;
+    const profLocked=edad<21&&["C","D","E"].includes(g)&&!cfg.ocultarFueraEdad;
+    const block=document.createElement("div");block.className="clase-block"+(profLocked?" prof-block-locked":"");
+    const tog=document.createElement("div");tog.className="clase-toggle";
+    const head=subs[0];
+    const subHint=profLocked?"No disponible hasta los 21 años":"Toca para ver subclases";
+    tog.innerHTML=`<span class="ct-ic">${head.ic}</span><div class="ct-info"><div class="ct-name">${head.gLabel}</div><div class="ct-sub">${subHint}</div></div><span class="ct-arrow">▶</span>`;
+    const subsDiv=document.createElement("div");subsDiv.className="clase-subs";
+
+    tog.onclick=()=>{
+      if(profLocked)return;
+      const willOpen=!subsDiv.classList.contains("open");
+      closeOtherBlocks(block);
+      subsDiv.classList.toggle("open",willOpen);
+      tog.classList.toggle("open",willOpen);
+    };
+
+    subs.forEach(sc=>{
+      const canAge=edad>=sc.edad;
+      const lockedYa=yaTiene.has(sc.cod);
+      const row=document.createElement("div");row.className="sub-row";
+      row.innerHTML=`<div class="chk"><svg class="chk-ic" viewBox="0 0 12 10"><path d="M1 5l3.5 3.5L11 1" stroke="white" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="sub-body">
+          <div class="sub-name">${sc.label}</div>
+          <div class="sub-desc">${lockedYa?"Ya figura en tu licencia actual — no hace falta volver a marcarla":sc.desc}</div>
+          ${!canAge&&!lockedYa&&!sc.prof?`<span class="pill pill-age">Requiere ${sc.edad} años (tenés ${edad})</span>`:""}
+        </div>`;
+      row.dataset.cod=sc.cod;
+      rowMap[sc.cod]={row,subsDiv,tog,block};
+      if(!canAge&&!lockedYa){row.classList.add("age-dim");}
+      else if(lockedYa){row.classList.add("lock-row");row.onclick=null;}
+      else{
+        row.onclick=()=>{
+          const inc=getIncluidas(selSet);
+          if(inc.has(sc.cod))return;
+          selSet.has(sc.cod)?selSet.delete(sc.cod):selSet.add(sc.cod);
+          updateSelector(row);
+        };
+      }
+      subsDiv.appendChild(row);
+    });
+    block.appendChild(tog);block.appendChild(subsDiv);
+    wrap.appendChild(block);
+    blockRefs.push({block,subsDiv,tog});
+    blocksByGrupo[g]=block;
+  }
+
+  appendGrupo("A");
+  appendGrupo("B");
+  if(edad<21&&!cfg.ocultarFueraEdad){
+    const av=document.createElement("div");av.className="wbox";av.style.marginBottom="10px";av.style.fontSize="13px";av.style.lineHeight="1.5";
+    av.textContent="Debés ser mayor de 21 años para tramitar las clases profesionales";
+    wrap.appendChild(av);
+  }
+  appendGrupo("C");
+  appendGrupo("D");
+  appendGrupo("E");
+
+  const sumWrap=document.createElement("div");
+  sumWrap.style.cssText="margin-top:10px;background:var(--color-background-secondary);border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;";
+  const sumLbl=document.createElement("div");sumLbl.style.cssText="color:var(--color-text-secondary);font-size:12px;margin-bottom:4px;";sumLbl.textContent="Sin subclases seleccionadas";
+  const tagWrap=document.createElement("div");tagWrap.className="sel-tags";
+  sumWrap.appendChild(sumLbl);sumWrap.appendChild(tagWrap);
+  wrap.appendChild(sumWrap);
+
+  const btn=makeConfirmBtn("Continuar");
+  btn.onclick=()=>{
+    const effective=new Set(selSet);
+    yaTiene.forEach(c=>effective.add(c));
+    const inc=getIncluidas(selSet);
+    inc.forEach(c=>effective.add(c));
+    if(!effective.size)return;
+    const arr=Array.from(effective);
+    S.selUsuario=Array.from(selSet).sort((a,b)=>a.localeCompare(b));
+    S.subclases=arr;
+    S.esProf=arr.some(c=>SUBS.find(s=>s.cod===c)?.prof);
+    onConfirm(arr);
+  };
+  wrap.appendChild(btn);
+  opts.appendChild(wrap);
+
+  function updateSelector(lastClickedRow){
+    const inc=getIncluidas(selSet);
+    Object.entries(rowMap).forEach(([cod,o])=>{
+      const row=o.row;
+      const sc=SUBS.find(s=>s.cod===cod);
+      const canAge=edad>=sc.edad;
+      const lockedYa=yaTiene.has(cod);
+      row.className="sub-row";
+      if(lockedYa){row.classList.add("lock-row");return;}
+      if(!canAge){row.classList.add("age-dim");return;}
+      let hint=row.querySelector(".inc-hint");
+      if(inc.has(cod)){
+        row.classList.add("inc-row");
+        if(!hint){hint=document.createElement("div");hint.className="sub-desc inc-hint";hint.style.fontSize="10px";hint.style.color="#94a3b8";hint.style.marginTop="4px";hint.textContent="Incluida automáticamente con tu selección";row.querySelector(".sub-body").appendChild(hint);}
+      } else {
+        if(hint)hint.remove();
+        if(selSet.has(cod))row.classList.add("sel-row");
+      }
+    });
+    grupos.forEach(g=>{
+      const blockEl=blocksByGrupo[g];
+      if(!blockEl)return;
+      const subsAll=SUBS.filter(s=>s.grupo===g);
+      const subs=cfg.ocultarFueraEdad
+        ?subsAll.filter(sc=>edad>=sc.edad||yaTiene.has(sc.cod))
+        :subsAll;
+      const hasSel=subs.some(s=>selSet.has(s.cod)||yaTiene.has(s.cod)||inc.has(s.cod));
+      const bt=blockEl.querySelector(".clase-toggle");
+      const nSel=subs.filter(s=>selSet.has(s.cod)).length;
+      const subEl=bt.querySelector(".ct-sub");
+      bt.classList.toggle("has-sel",hasSel);
+      if(blockEl.classList.contains("prof-block-locked")){
+        subEl.textContent="No disponible hasta los 21 años";
+        return;
+      }
+      if(yaTiene.size){
+        subEl.textContent=nSel?`${nSel} nueva${nSel>1?"s":""}`:(hasSel?"Incluidas por tu licencia":"Toca para ver subclases");
+      } else {
+        subEl.textContent=nSel?`${nSel} seleccionada${nSel>1?"s":""}`:(hasSel?"Ver subclases":"Toca para ver subclases");
+      }
+    });
+    tagWrap.innerHTML="";
+    const totalEff=new Set(selSet);inc.forEach(c=>totalEff.add(c));yaTiene.forEach(c=>totalEff.add(c));
+    const soloSel=Array.from(selSet).sort((a,b)=>a.localeCompare(b));
+    if(totalEff.size===0){
+      sumLbl.textContent="Sin subclases seleccionadas";
+      btn.classList.remove("on");btn.textContent="Continuar";
+    } else {
+      sumLbl.textContent=soloSel.length?"Subclases elegidas por vos:":"Elegí al menos una subclase:";
+      soloSel.forEach(c=>{
+        const sc=SUBS.find(s=>s.cod===c);
+        const t=document.createElement("span");t.className="stag"+(sc&&sc.prof?" prof":"");t.textContent=c;
+        tagWrap.appendChild(t);
+      });
+      activateBtn(btn,`Continuar (${totalEff.size} subclase${totalEff.size>1?"s":""})`);
+    }
+    if(lastClickedRow&&lastClickedRow.dataset.cod){
+      const ref=rowMap[lastClickedRow.dataset.cod];
+      if(ref){ref.subsDiv.classList.remove("open");ref.tog.classList.remove("open");}
+    }
+    opts.scrollIntoView({behavior:"smooth",block:"end"});
+  }
+
+  if(preselF&&preselF.length){
+    grupos.forEach(g=>{
+      const hasPre=SUBS.filter(s=>s.grupo===g).some(s=>preselF.includes(s.cod));
+      const block=blocksByGrupo[g];
+      if(hasPre&&block){
+        closeOtherBlocks(block);
+        block.querySelector(".clase-subs").classList.add("open");
+        block.querySelector(".clase-toggle").classList.add("open");
+      }
+    });
+  }
+  updateSelector();
+  opts.scrollIntoView({behavior:"smooth",block:"end"});
+}
+
+/* ════════════════════ FLOW ════════════════════ */
+
+async function paso0(){
+  setProg(0);
+  await addBot(`<span class="badge bi">Bienvenida/o</span><br>Hola, soy el asistente para tramitar tu <strong>Licencia de Conducir</strong> en San Vicente, Santa Fe.<br><br>Te voy a guiar paso a paso.`);
+  showDni(null);
+}
+
+function backToDni(){
+  clearOpts();
+  showDni(()=>{msgs.innerHTML="";opts.innerHTML="";paso0();});
+}
+
+async function paso1_loc(){
+  setProg(1);
+  await addBot(`¿En qué localidad tenés tu domicilio real? Solo podés tramitar en el municipio que corresponde a tu domicilio (Ley 13.133, Art. 25).`);
+  showSelect(Object.keys(LOCS),"Seleccioná tu localidad",backToDni,(val)=>{
+    S.localidad=val;
+    S.tramiteLocal=!!LOCS[val].propio;
+    addUser(val);
+    paso2_nac();
+  },S.localidad);
+}
+
+async function paso2_nac(){
+  setProg(1);
+  await addBot(`¿Cuál es tu <strong>fecha de nacimiento</strong>?`);
+  showDate("Elegí la fecha y tocá confirmar para seguir.",paso1_loc,(val)=>{
+    const edad=calcEdad(val);
+    S.nac=val;S.edad=edad;
+    const fmt=fmtFechaDMY(val);
+    addUser(`Nacimiento: ${fmt} (${edad} años)`);
+    paso3_tieneLC();
+  },S.nac,{mode:"nacimiento"});
+}
+
+/* ── ¿Tiene licencia? ── */
+async function paso3_tieneLC(){
+  setProg(2);
+  await addBot(`¿Ya tenés o tuviste una licencia de conducir?`);
+  pickOne([
+    {icon:"✗",label:"No, nunca tuve licencia"},
+    {icon:"✓",label:"Sí, tengo o tuve una licencia"}
+  ],(it,idx)=>{
+    if(idx===0){addUser("No, nunca tuve licencia");S.tipo="alta";S.licActuales=[];paso4_nuevasSubs();}
+    else{addUser("Sí, tengo o tuve una licencia");paso3b_licActuales();}
+  },paso2_nac);
+}
+
+/* ── Selección de licencias actuales ── */
+async function paso3b_licActuales(){
+  setProg(2);
+  await addBot(`Seleccioná las subclases de tu licencia actual:`);
+  showSubclasSelector(S.edad,S.licActuales,(selArr)=>{
+    S.licActuales=selArr;
+    const etq=selArr.join(", ");
+    addUser(`Licencias actuales: ${etq}`);
+    paso3bb_eleccionRenovAmp();
+  },paso3_tieneLC,{ocultarFueraEdad:true});
+}
+
+/* ── Tras elegir licencias actuales: renovar igual vs ampliar ── */
+async function paso3bb_eleccionRenovAmp(){
+  setProg(2);
+  await addBot(`¿Querés <strong>renovar las mismas subclases</strong> que ya tenés o <strong>ampliar</strong> con categorías nuevas?`);
+  pickOne([
+    {icon:"↺",label:"Renovar solo lo que ya tengo",sub:"Mantenemos tus clases actuales"},
+    {icon:"+",label:"Ampliar mi licencia",sub:"Vas a elegir subclases nuevas para agregar"}
+  ],(it,idx)=>{
+    if(idx===0){S.modoPostLic="renovar_igual";addUser("Renovar mis clases actuales");paso3c_venc();}
+    else{S.modoPostLic="ampliar";addUser("Quiero ampliar");paso4_ampliarDesdeLicencia();}
+  },paso3b_licActuales,"Volver a licencias actuales");
+}
+
+/* ── Ampliación: solo subclases nuevas (las actuales van bloqueadas en gris) ── */
+async function paso4_ampliarDesdeLicencia(){
+  setProg(3);
+  await addBot(`Seleccioná las <strong>nuevas</strong> subclases que querés agregar. Las que ya tenés aparecen como referencia y no se pueden volver a marcar.`);
+  showSubclasSelector(S.edad,[],()=>{
+    addUser(`Subclases a tramitar: ${S.subclases.join(", ")}`);
+    paso3c_venc();
+  },paso3bb_eleccionRenovAmp,{yaTiene:S.licActuales});
+}
+
+/* ── Vencimiento ── */
+async function paso3c_venc(){
+  setProg(2);
+  await addBot(`¿Cuándo vence (o venció) tu licencia?`);
+  showDate("Elegí la fecha y tocá confirmar para seguir.",()=>{
+    if(S.modoPostLic==="ampliar")paso4_ampliarDesdeLicencia();
+    else if(S.modoPostLic==="renovar_igual")paso3bb_eleccionRenovAmp();
+    else paso3b_licActuales();
+  },(val)=>{
+    const dias=(new Date()-new Date(val))/(1000*60*60*24);
+    const fv=fmtFechaDMY(val);
+    if(dias>365){
+      const eraRenovarIgual=S.modoPostLic==="renovar_igual";
+      S.modoPostLic=null;
+      addUser(`Fecha de vencimiento: ${fv} — Vencida hace más de un año`);
+      S.tipo="alta_forzada";
+      if(eraRenovarIgual&&S.licActuales&&S.licActuales.length){
+        S.skipReselectSubs=true;
+        S.subclases=[...S.licActuales];
+        S.esProf=S.subclases.some(c=>SUBS.find(s=>s.cod===c)?.prof);
+        void (async()=>{
+          await addBot(`Tu licencia venció hace más de un año: corresponde un <span class="badge bw">Alta</span> con exámenes completos (Ley 13.133).<br><br>Como elegiste renovar tus clases actuales, <strong>mantenemos las mismas subclases</strong> que ya habías indicado; las vas a ver en el resumen.`);
+          paso5_requisitos();
+        })();
+      } else {
+        S.skipReselectSubs=false;
+        paso3d_altaForzada();
+      }
+    } else {
+      S.tipo="renovacion";
+      addUser(`Fecha de vencimiento: ${fv} — ${dias>0?"Vencida recientemente":"Aún vigente"}`);
+      if(S.modoPostLic==="renovar_igual"){
+        S.tipo="renovacion_simple";
+        S.subclases=[...S.licActuales];
+        paso5_requisitos();
+      } else if(S.modoPostLic==="ampliar"){
+        S.tipo="renovacion_ampliacion";
+        paso5_requisitos();
+      }
+    }
+  },null,{mode:"vencimiento"});
+}
+
+async function paso3d_altaForzada(){
+  clearOpts();setProg(2);
+  await addBot(`Tu licencia venció hace más de un año. Debés realizar un <span class="badge bw">Alta</span> y rendir todos los exámenes nuevamente (Art. 23, Ley 13.133).`);
+  paso4_nuevasSubs();
+}
+
+/* ── Selección de nuevas subclases (alta o reposición por vencimiento >1 año) ── */
+async function paso4_nuevasSubs(){
+  S.skipReselectSubs=false;
+  setProg(3);
+  await addBot(`Seleccioná las subclases que querés tramitar:`);
+  showSubclasSelector(S.edad,S.subclases.length?S.subclases:[],(selArr)=>{
+    S.subclases=selArr;
+    S.esProf=S.subclases.some(c=>SUBS.find(s=>s.cod===c)?.prof);
+    addUser(`Subclases: ${selArr.join(", ")}`);
+    paso5_requisitos();
+  },()=>{
+    if(S.tipo==="alta_forzada")paso3d_altaForzada();
+    else paso3_tieneLC();
+  });
+}
+
+function backDesdeResumen(){
+  if(S.tipo==="renovacion_simple")paso3c_venc();
+  else if(S.tipo==="renovacion_ampliacion")paso4_ampliarDesdeLicencia();
+  else if(S.tipo==="alta_forzada"&&S.skipReselectSubs)paso3c_venc();
+  else paso4_nuevasSubs();
+}
+
+async function paso2_nac_corregir(){
+  setProg(1);
+  await addBot(`<span class="badge bw">Corregir datos</span><br>Volvé a ingresar tu <strong>fecha de nacimiento</strong>. Luego repetimos las preguntas del trámite; si cambia tu edad, revisá las subclases.`);
+  showDate("Elegí la fecha y tocá confirmar para seguir.",paso5_requisitos,(val)=>{
+    S.nac=val;
+    S.edad=calcEdad(val);
+    const fmt=fmtFechaDMY(val);
+    addUser(`Nacimiento: ${fmt} (${S.edad} años)`);
+    S.tipo="";
+    S.licActuales=[];
+    S.subclases=[];
+    S.selUsuario=[];
+    S.esProf=false;
+    S.modoPostLic=null;
+    S.skipReselectSubs=false;
+    paso3_tieneLC();
+  },S.nac,{mode:"nacimiento"});
+}
+
+/** Compartir + copiar + correo (destinatario opcional en el campo de correo). */
+function appendExportToolbar(parent,txt){
+  const subj=encodeURIComponent(`Licencia de conducir — DNI ${S.dni||""} — ${S.localidad||""}`);
+  const body=encodeURIComponent(txt);
+  const row=document.createElement("div");row.className="export-row";
+
+  const bSh=document.createElement("button");bSh.type="button";bSh.className="cta-btn cg";bSh.innerHTML="⇄ Compartir resumen";
+  bSh.onclick=async()=>{
+    if(typeof navigator.share==="function"){
+      try{
+        await navigator.share({title:"Resumen — Licencia de conducir",text:txt});
+        return;
+      }catch(e){
+        if(e&&e.name==="AbortError")return;
+      }
+    }
+    try{
+      await navigator.clipboard.writeText(txt);
+      alert("Tu navegador no abre el panel de compartir aquí. Copiamos el resumen al portapapeles para que lo pegues donde quieras.");
+    }catch(err){
+      alert("No se pudo compartir ni copiar. Usá «Copiar resumen» o el correo más abajo.");
+    }
+  };
+  row.appendChild(bSh);
+
+  const bCp=document.createElement("button");bCp.type="button";bCp.className="cta-btn cg";bCp.innerHTML="📋 Copiar resumen";
+  bCp.onclick=async()=>{
+    try{
+      await navigator.clipboard.writeText(txt);
+      alert("Resumen copiado al portapapeles.");
+    }catch(e){
+      alert("No se pudo copiar. Seleccioná el texto desde el correo o contactá por WhatsApp.");
+    }
+  };
+  row.appendChild(bCp);
+
+  parent.appendChild(row);
+
+  const mailWrap=document.createElement("div");mailWrap.className="export-mail";
+  const mailLab=document.createElement("label");mailLab.htmlFor="export-mail-inp";
+  mailLab.textContent="Correo electrónico (opcional — si lo completás, se abre tu gestor para enviar a esa dirección)";
+  const mailInp=document.createElement("input");mailInp.type="email";mailInp.id="export-mail-inp";mailInp.autocomplete="email";mailInp.inputMode="email";mailInp.placeholder="ejemplo@correo.com";
+  const bMail=document.createElement("button");bMail.type="button";bMail.className="cta-btn cp";bMail.innerHTML="✉ Abrir correo con el resumen";
+  bMail.onclick=()=>{
+    const to=(mailInp.value||"").trim();
+    const re=/^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if(to&&!re.test(to)){alert("Revisá el formato del correo (debe incluir @ y dominio).");mailInp.focus();return;}
+    const href=to?`mailto:${encodeURIComponent(to)}?subject=${subj}&body=${body}`:`mailto:?subject=${subj}&body=${body}`;
+    window.location.href=href;
+  };
+  mailWrap.appendChild(mailLab);mailWrap.appendChild(mailInp);mailWrap.appendChild(bMail);
+  parent.appendChild(mailWrap);
+
+  return row;
+}
+
+function textoResumenTramite(){
+  const tipoLabel={alta:"Alta — primera licencia",alta_forzada:"Alta — vencida más de 1 año",renovacion_simple:"Renovación simple",renovacion_ampliacion:"Renovación con ampliación"}[S.tipo]||String(S.tipo||"");
+  const nacFmt=S.nac?fmtFechaDMY(S.nac):"—";
+  const subSel=S.selUsuario&&S.selUsuario.length?S.selUsuario.join(", "):"—";
+  const subFull=S.subclases&&S.subclases.length?S.subclases.join(", "):"—";
+  return[
+    "RESUMEN — Licencia de conducir",
+    "",
+    "DNI: "+(S.dni||"—"),
+    "Localidad de domicilio: "+(S.localidad||"—"),
+    "Ámbito de gestión: "+(S.tramiteLocal?"San Vicente (turno local)":"Otro municipio — contacto según domicilio"),
+    "Fecha de nacimiento: "+nacFmt+(S.edad?" ("+S.edad+" años)":""),
+    "Tipo de trámite: "+tipoLabel,
+    "Subclases elegidas por vos: "+subSel,
+    "Subclases del trámite (efectivas / incluidas): "+subFull,
+    "Clases profesionales: "+(S.esProf?"Sí":"No"),
+    "",
+    "— Mensaje generado por el asistente —",
+    fmtFechaHoraAhora(),
+  ].join("\n");
+}
+
+function canalFinExterno(loc){
+  const L=LOCS[loc];
+  if(!L||L.propio)return"turno";
+  if(L.finContacto==="mail")return"mail";
+  if(L.finContacto==="wa")return"wa";
+  if(L.mail&&!L.wsp)return"mail";
+  if(L.wsp)return"wa";
+  return L.mail?"mail":"wa";
+}
+
+async function paso5b_preTurno(o){
+  o=o||{};
+  setProg(5);
+  const txt=textoResumenTramite();
+  const subj=encodeURIComponent(`Licencia de conducir — DNI ${S.dni||""} — ${S.localidad||""}`);
+  const body=encodeURIComponent(txt);
+
+  if(!o.silent){
+    await addBot(`<span class="badge bi">Tu resumen</span><br>Usá <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o <strong>Abrir correo con el resumen</strong> (podés ingresar el correo de destino). Después seguí el paso según tu localidad.`);
+  }
+
+  clearOpts();
+  addBack(paso5_requisitos,"Volver al paso anterior");
+
+  appendExportToolbar(opts,txt);
+
+  const sep=document.createElement("div");sep.style.cssText="margin:16px 0;border-top:.5px solid var(--color-border-tertiary)";
+  opts.appendChild(sep);
+
+  if(S.tramiteLocal){
+    const hint=document.createElement("p");hint.className="sub-desc";hint.style.marginBottom="10px";
+    hint.textContent="Tu domicilio corresponde a San Vicente: el siguiente paso es coordinar turno en el sistema local.";
+    opts.appendChild(hint);
+    const bTurno=document.createElement("button");bTurno.type="button";bTurno.className="cbtn-confirm on";bTurno.style.marginTop="4px";bTurno.textContent="Ir al turno";
+    bTurno.onclick=()=>{addUser("Ir al turno");paso6_turno();};
+    opts.appendChild(bTurno);
+  } else {
+    const L=LOCS[S.localidad];
+    const modo=canalFinExterno(S.localidad);
+    const hint=document.createElement("div");hint.className="wbox";hint.style.marginBottom="12px";
+    hint.innerHTML=`Tu domicilio está en <strong>${S.localidad}</strong>. El turno y la gestión los define tu municipio. Enviá este resumen por el canal oficial:`;
+    opts.appendChild(hint);
+
+    if(modo==="mail"&&L.mail){
+      const a=document.createElement("a");a.href=`mailto:${L.mail}?subject=${subj}&body=${body}`;
+      a.className="cta-btn cp";a.style.cssText="width:100%;justify-content:center;padding:12px;font-size:14px;";
+      a.textContent=`Abrir correo a ${L.mail}`;
+      a.addEventListener("click",async e=>{
+        e.preventDefault();
+        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen. Podés seguir usando <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o el campo de correo arriba en este paso.`);
+        window.location.href=a.href;
+      });
+      opts.appendChild(a);
+    } else if(modo==="wa"&&L.wsp){
+      const wa=`https://wa.me/${L.wsp.replace(/\D/g,"")}?text=${encodeURIComponent(txt)}`;
+      const bWa=document.createElement("button");bWa.type="button";bWa.className="cta-btn cw";
+      bWa.style.cssText="width:100%;justify-content:center;padding:12px;font-size:14px;";
+      bWa.innerHTML="💬 Enviar resumen por WhatsApp al municipio";
+      bWa.onclick=async()=>{
+        window.open(wa,"_blank","noopener,noreferrer");
+        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar. <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> y <strong>Abrir correo con el resumen</strong> siguen arriba en este paso.`);
+      };
+      opts.appendChild(bWa);
+    } else if(L.mail){
+      const a=document.createElement("a");a.href=`mailto:${L.mail}?subject=${subj}&body=${body}`;
+      a.className="cta-btn cp";a.style.cssText="width:100%;justify-content:center;padding:12px;font-size:14px;";
+      a.textContent=`Abrir correo a ${L.mail}`;
+      a.addEventListener("click",async e=>{
+        e.preventDefault();
+        await addBot(`<span class="badge bo">Correo</span><br>Se abrirá tu gestor de correo con el resumen. Podés seguir usando <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> o el campo de correo arriba en este paso.`);
+        window.location.href=a.href;
+      });
+      opts.appendChild(a);
+    } else if(L.wsp){
+      const wa=`https://wa.me/${L.wsp.replace(/\D/g,"")}?text=${encodeURIComponent(txt)}`;
+      const bWa=document.createElement("button");bWa.type="button";bWa.className="cta-btn cw";
+      bWa.style.cssText="width:100%;justify-content:center;padding:12px;font-size:14px;";
+      bWa.innerHTML="💬 Enviar resumen por WhatsApp al municipio";
+      bWa.onclick=async()=>{
+        window.open(wa,"_blank","noopener,noreferrer");
+        await addBot(`<span class="badge bo">WhatsApp</span><br>Se abrió una ventana con el mensaje listo para enviar. <strong>Compartir resumen</strong>, <strong>Copiar resumen</strong> y <strong>Abrir correo con el resumen</strong> siguen arriba en este paso.`);
+      };
+      opts.appendChild(bWa);
+    } else {
+      const p=document.createElement("p");p.className="err";p.style.display="block";
+      p.textContent="Configurá wsp o mail para esta localidad en LOCS.";
+      opts.appendChild(p);
+    }
+  }
+  opts.scrollIntoView({behavior:"smooth",block:"end"});
+}
+
+/* ── Requisitos + Resumen integrado ── */
+async function paso5_requisitos(){
+  setProg(4);
+  const renovSimple=S.tipo==="renovacion_simple";
+  const tipoLabel={alta:"Alta — primera licencia",alta_forzada:"Alta — vencida más de 1 año",renovacion_simple:"Renovación simple",renovacion_ampliacion:"Renovación con ampliación"}[S.tipo];
+  const nacFmt=fmtFechaDMY(S.nac);
+  const subcDesc=S.selUsuario&&S.selUsuario.length?S.selUsuario.join(", "):S.subclases.join(", ");
+
+  await addBot(`<span class="badge bi">Documentación y resumen</span>`);
+
+  setTimeout(()=>{
+    clearOpts();
+    addBack(backDesdeResumen,"Volver al paso anterior");
+
+    const chkCenat=document.createElement("input");chkCenat.type="checkbox";chkCenat.id="chk-cenat";
+    const chkLibre=document.createElement("input");chkLibre.type="checkbox";chkLibre.id="chk-libre";
+    const chkPdf=document.createElement("input");chkPdf.type="checkbox";chkPdf.id="chk-pdf";
+    let datosOk=false;
+
+    const root=document.createElement("div");
+
+    const docSec=document.createElement("div");docSec.className="doc-section";
+    docSec.innerHTML="<h4>Revisá que tengas la documentación lista</h4>";
+
+    const r1=document.createElement("div");r1.className="doc-chk-row";
+    const sp1=document.createElement("span");sp1.style.width="18px";sp1.style.flexShrink="0";
+    const b1=document.createElement("div");b1.className="doc-chk-lbl";
+    b1.innerHTML="<strong>1. DNI vigente</strong><small>Original y fotocopia. El domicilio debe figurar en San Vicente.</small>";
+    r1.appendChild(sp1);r1.appendChild(b1);
+    docSec.appendChild(r1);
+
+    const cenatAct=document.createElement("div");cenatAct.style.marginTop="8px";
+    const aCen=document.createElement("a");aCen.href="https://www.argentina.gob.ar/seguridadvial/licencianacional/cenat";aCen.target="_blank";aCen.rel="noopener";aCen.className="cta-btn cs";aCen.textContent="Obtener CENAT online";
+    aCen.addEventListener("click",()=>{chkCenat.checked=true;upd();});
+    cenatAct.appendChild(aCen);
+
+    const cenWrap=document.createElement("div");cenWrap.className="doc-chk-row";
+    cenWrap.appendChild(chkCenat);
+    const cenBody=document.createElement("div");cenBody.className="doc-chk-lbl";
+    cenBody.innerHTML="<strong>2. Certificado CENAT</strong><small>Certificado Nacional de Antecedentes de Tránsito. Se obtiene y paga online.</small>";
+    cenBody.appendChild(cenatAct);cenWrap.appendChild(cenBody);
+    docSec.appendChild(cenWrap);
+
+    if(!renovSimple){
+      const libAct=document.createElement("div");libAct.style.marginTop="8px";
+      const aLib=document.createElement("a");aLib.href=`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${encodeURIComponent("Hola, necesito el libre de multas para licencia de conducir.")}`;aLib.target="_blank";aLib.rel="noopener";aLib.className="cta-btn cw";aLib.textContent="Solicitar libre de multas por WhatsApp";
+      aLib.addEventListener("click",()=>{chkLibre.checked=true;upd();});
+      libAct.appendChild(aLib);
+
+      const libWrap=document.createElement("div");libWrap.className="doc-chk-row";
+      libWrap.appendChild(chkLibre);
+      const libBody=document.createElement("div");libBody.className="doc-chk-lbl";
+      libBody.innerHTML="<strong>3. Libre de multas municipal</strong><small>Verificamos que no tenés sanciones firmes pendientes (Art. 23 inc. g, Ley 13.133).</small>";
+      libBody.appendChild(libAct);libWrap.appendChild(libBody);
+      docSec.appendChild(libWrap);
+    }
+
+    const pdfAct=document.createElement("div");pdfAct.style.marginTop="8px";
+    const aPdf=document.createElement("a");aPdf.href="#";aPdf.className="cta-btn cr";aPdf.textContent="Descargar Declaración Jurada (PDF)";
+    aPdf.addEventListener("click",e=>{e.preventDefault();chkPdf.checked=true;upd();});
+    pdfAct.appendChild(aPdf);
+
+    const pdfWrap=document.createElement("div");pdfWrap.className="doc-chk-row";
+    pdfWrap.appendChild(chkPdf);
+    const pdfBody=document.createElement("div");pdfBody.className="doc-chk-lbl";
+    const declNum=renovSimple?"3":"4";
+    pdfBody.innerHTML=`<strong>${declNum}. Declaración Jurada de Salud</strong><small>Declarás bajo juramento tus aptitudes psicofísicas (Art. 23 inc. c, Ley 13.133).</small>`;
+    pdfBody.appendChild(pdfAct);pdfWrap.appendChild(pdfBody);
+    docSec.appendChild(pdfWrap);
+
+    root.appendChild(docSec);
+
+    const sumSec=document.createElement("div");sumSec.className="sum-section";
+    sumSec.innerHTML="<h4>Resumen del trámite</h4>";
+    const sc=document.createElement("div");sc.className="sc";sc.style.marginTop="6px";
+    sc.innerHTML=`
+      <div class="sr"><span>DNI</span><span>${S.dni||"—"}</span></div>
+      <div class="sr"><span>Localidad</span><span>${S.localidad||"—"}</span></div>
+      <div class="sr"><span>Fecha de nacimiento</span><span>${nacFmt} (${S.edad} años)</span></div>
+      <div class="sr"><span>Tipo de trámite</span><span>${tipoLabel}</span></div>
+      <div class="sr"><span>Subclases (seleccionadas)</span><span>${subcDesc}</span></div>`;
+    sumSec.appendChild(sc);
+    if(S.tipo==="renovacion_ampliacion"){
+      const w=document.createElement("div");w.className="ibox";w.style.marginTop="8px";
+      w.textContent="La vigencia de las nuevas subclases se alineará al vencimiento de tu licencia actual (Art. 28, Ley 13.133).";
+      sumSec.appendChild(w);
+    }
+    root.appendChild(sumSec);
+
+    const datosP=document.createElement("div");datosP.style.marginTop="14px";
+    datosP.innerHTML="<strong>¿Son correctos estos datos?</strong>";
+    root.appendChild(datosP);
+    const datosBtns=document.createElement("div");datosBtns.style.cssText="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap";
+    const bDatSi=document.createElement("button");bDatSi.type="button";bDatSi.className="opt-btn";bDatSi.style.flex="1";bDatSi.style.minWidth="120px";
+    bDatSi.innerHTML=`<span class="ic">✓</span><div class="ol"><span class="lbl">Sí</span></div>`;
+    const bDatNo=document.createElement("button");bDatNo.type="button";bDatNo.className="opt-btn";bDatNo.style.flex="1";bDatNo.style.minWidth="120px";
+    bDatNo.innerHTML=`<span class="ic">✗</span><div class="ol"><span class="lbl">No</span><span class="sub">Volver a ingresar</span></div>`;
+    bDatSi.onclick=()=>{
+      datosOk=true;
+      bDatSi.classList.add("sel");
+      bDatNo.classList.remove("sel");
+      upd();
+    };
+    bDatNo.onclick=()=>{
+      datosOk=false;
+      bDatNo.classList.add("sel");
+      bDatSi.classList.remove("sel");
+      paso2_nac_corregir();
+    };
+    datosBtns.appendChild(bDatSi);datosBtns.appendChild(bDatNo);
+    root.appendChild(datosBtns);
+
+    const go=document.createElement("button");
+    go.type="button";go.className="cbtn-confirm";go.style.marginTop="14px";go.textContent="Continuar";
+
+    function allOk(){
+      const base=chkCenat.checked&&chkPdf.checked&&datosOk===true;
+      if(renovSimple)return base;
+      return base&&chkLibre.checked;
+    }
+    function upd(){
+      if(allOk()){go.classList.add("on");go.style.opacity="1";go.style.pointerEvents="all";}
+      else{go.classList.remove("on");go.style.opacity=".32";go.style.pointerEvents="none";}
+    }
+    [chkCenat,chkLibre,chkPdf].forEach(c=>c.addEventListener("change",upd));
+    upd();
+
+    go.onclick=()=>{if(!allOk())return;addUser("Continuar");paso5b_preTurno({});};
+    root.appendChild(go);
+
+    opts.appendChild(root);
+    opts.scrollIntoView({behavior:"smooth",block:"end"});
+  },400);
+}
+
+/* ── Turno ── */
+async function paso6_turno(){
+  setProg(5);
+  await addBot(buildTurnero());
+  setTimeout(()=>{
+    clearOpts();
+    addBack(()=>paso5b_preTurno({silent:true}),"Volver al resumen");
+
+    const txt=textoResumenTramite();
+    const pie=document.createElement("p");pie.className="sub-desc";pie.style.marginBottom="10px";
+    pie.innerHTML="Podés <strong>compartir</strong>, <strong>copiar</strong> o <strong>abrir correo</strong> (con destinatario opcional) con el resumen; las mismas opciones siguen disponibles después de usar el turno.";
+    opts.appendChild(pie);
+
+    appendExportToolbar(opts,txt);
+
+    const b=document.createElement("button");b.className="opt-btn";b.style.marginTop="12px";
+    b.innerHTML=`<span class="ic">↺</span><div class="ol"><span class="lbl">Iniciar un trámite nuevo</span></div>`;
+    b.onclick=reiniciar;opts.appendChild(b);
+    opts.scrollIntoView({behavior:"smooth",block:"end"});
+  },300);
+}
+
+function buildTurnero(){
+  if(S.esProf){
+    const msg=encodeURIComponent(`Hola, quiero tramitar subclases ${S.subclases.join(", ")}, solicito libre de multas y turno.`);
+    return `<div class="tc"><div class="ti">💬</div><h3>Coordiná tu turno por WhatsApp</h3><p>Para licencias profesionales la gestión se realiza con nuestro equipo.</p>
+    <a href="https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${msg}" target="_blank" rel="noopener" class="cta-btn cw" style="width:100%;justify-content:center;font-size:13px;padding:10px;">Pedir libre de multas y solicitar turno</a></div>`;
+  }
+  if(S.tipo==="renovacion_simple"){
+    return `<div class="tc"><div class="ti">🩺</div><h3>Turno — Examen psicofísico</h3><p>Para tu renovación solo necesitás el examen psicofísico.</p>
+    <a href="#" onclick="alert('Aquí se abrirá el turnero de examen psicofísico')" class="cta-btn cp" style="width:100%;justify-content:center;font-size:13px;padding:10px;">Sacar turno — Examen psicofísico</a></div>`;
+  }
+  return `<div class="tc"><div class="ti">📋</div><h3>Turno — Examen teórico-práctico</h3><p>Para tu trámite de ${S.tipo==="renovacion_ampliacion"?"ampliación":"alta"} el primer paso es el examen teórico-práctico.</p>
+  <a href="#" onclick="alert('Aquí se abrirá el turnero de examen teórico-práctico')" class="cta-btn cg" style="width:100%;justify-content:center;font-size:13px;padding:10px;">Sacar turno — Examen teórico-práctico</a></div>`;
+}
+
+function reiniciar(){
+  msgs.innerHTML="";opts.innerHTML="";
+  S={dni:"",localidad:"",tramiteLocal:true,nac:null,edad:0,tipo:"",licActuales:[],subclases:[],selUsuario:[],esProf:false,modoPostLic:null,skipReselectSubs:false};
+  paso0();
+}
+
+paso0();
+</script>
+
+</body>
+</html>
