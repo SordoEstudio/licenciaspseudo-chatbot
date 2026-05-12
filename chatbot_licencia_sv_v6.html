@@ -46,10 +46,6 @@ body{background:transparent}
 .bot .av{background:#1a4fa0;color:white}
 .user .av{background:#b5d4f4;color:#042c53}
 #opts{margin-top:12px}
-/* progress */
-.pbar{display:flex;gap:4px;margin-bottom:1rem}
-.ps{flex:1;height:3px;border-radius:2px;background:var(--color-border-tertiary);transition:background .3s}
-.ps.on{background:#1a4fa0}.ps.dn{background:#0f6e56}
 /* back */
 .back-btn{background:transparent;border:.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:7px 12px;font-size:12px;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;gap:6px;margin-bottom:10px;transition:background .12s;width:fit-content}
 .back-btn:hover{background:var(--color-background-secondary)}
@@ -183,6 +179,121 @@ input.date-inp,select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5p
 .req-lotengo{background:#1a4fa0;color:white;border:none;border-radius:var(--border-radius-md);padding:8px 14px;font-size:12px;cursor:pointer;font-weight:500;display:flex;align-items:center;transition:opacity .12s}
 .req-lotengo:hover{opacity:.88}
 .req-done .req-lotengo{display:none!important}
+/* Botón principal de "Sacar turno" — destacado, claro, prioridad visual */
+.cbtn-turno{
+  margin-top:8px;
+  padding:16px 20px;
+  font-size:16px;
+  font-weight:600;
+  letter-spacing:.01em;
+  border-radius:var(--border-radius-lg);
+  box-shadow:0 4px 14px rgba(26,79,160,.28);
+  line-height:1.3;
+}
+.cbtn-turno:hover{box-shadow:0 6px 18px rgba(26,79,160,.36)}
+/* ── Botón secundario "Ver / Descargar resumen" ── */
+.cbtn-resumen{
+  margin-top:10px;
+  padding:12px 16px;
+  font-size:14px;
+  font-weight:500;
+  background:var(--color-background-primary);
+  color:#1a4fa0;
+  border:1px solid #b5d4f4;
+  border-radius:var(--border-radius-md);
+  cursor:pointer;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:background .12s,border-color .12s;
+}
+.cbtn-resumen:hover{background:#e6f1fb;border-color:#1a4fa0}
+.cbtn-resumen .ic{font-size:16px}
+/* ── Modal del resumen final (Fase 2) ── */
+#resumen-overlay{
+  position:fixed;inset:0;background:rgba(15,23,42,.55);
+  display:none;align-items:flex-start;justify-content:center;
+  z-index:1000;padding:20px 12px;overflow-y:auto;
+}
+#resumen-overlay.open{display:flex}
+.resumen-modal{
+  background:#ffffff;border-radius:var(--border-radius-lg);
+  max-width:760px;width:100%;
+  box-shadow:0 20px 50px rgba(15,23,42,.25);
+  display:flex;flex-direction:column;overflow:hidden;
+  margin:auto;
+}
+.resumen-toolbar{
+  display:flex;gap:10px;align-items:center;justify-content:space-between;
+  padding:12px 16px;border-bottom:.5px solid var(--color-border-tertiary);
+  background:var(--color-background-secondary);flex-wrap:wrap;
+}
+.resumen-toolbar h2{font-size:15px;font-weight:600;color:var(--color-text-primary);margin:0}
+.resumen-toolbar-actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn-pdf{
+  background:#1a4fa0;color:white;border:none;border-radius:var(--border-radius-md);
+  padding:9px 14px;font-size:13px;font-weight:500;cursor:pointer;
+  display:inline-flex;align-items:center;gap:6px;transition:opacity .12s;
+}
+.btn-pdf:hover{opacity:.9}
+.btn-cerrar{
+  background:var(--color-background-primary);color:var(--color-text-secondary);
+  border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);
+  padding:9px 14px;font-size:13px;cursor:pointer;
+}
+.btn-cerrar:hover{background:var(--color-background-secondary)}
+.resumen-print{padding:24px 28px;color:#0f172a;font-family:var(--font-sans,system-ui,sans-serif);}
+.resumen-print h1{font-size:20px;font-weight:600;margin-bottom:4px}
+.resumen-print h2{font-size:15px;font-weight:600;margin:20px 0 8px;padding-bottom:6px;border-bottom:1px solid #e2e8f0}
+.resumen-print h2:first-of-type{margin-top:14px}
+.resumen-print .meta{color:#64748b;font-size:12px;margin-bottom:8px}
+.resumen-print .grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;margin-top:6px}
+.resumen-print .grid2 div{font-size:13px;line-height:1.5}
+.resumen-print .grid2 strong{color:#475569;font-weight:500;display:block;font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.resumen-print .grid2 span{color:#0f172a;font-weight:500}
+.resumen-print .pago{
+  background:#f0faf6;border:.5px solid #9fe1cb;border-radius:var(--border-radius-md);
+  padding:14px 16px;margin-top:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;
+}
+.resumen-print .pago-monto{font-size:22px;font-weight:600;color:#085041}
+.resumen-print .pago-detalle{font-size:12px;color:#085041;line-height:1.4}
+.resumen-print .checklist{list-style:none;padding:0;margin:6px 0 0;display:flex;flex-direction:column;gap:6px}
+.resumen-print .checklist li{
+  display:flex;gap:10px;font-size:13px;line-height:1.5;
+  padding:8px 10px;border:.5px solid #e2e8f0;border-radius:var(--border-radius-md);
+}
+.resumen-print .checklist .box{
+  width:16px;height:16px;border:1.5px solid #94a3b8;border-radius:3px;flex-shrink:0;margin-top:2px;
+}
+.resumen-print .checklist small{display:block;color:#64748b;font-size:11px;margin-top:2px}
+.resumen-print .links{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+.resumen-print .links a{
+  color:#1a4fa0;text-decoration:none;font-size:13px;
+  padding:8px 10px;border:.5px solid #b5d4f4;border-radius:var(--border-radius-md);
+  background:#f8fbff;display:flex;align-items:center;gap:8px;
+}
+.resumen-print .links a:hover{background:#e6f1fb}
+.resumen-print .links a span.lico{font-size:14px;flex-shrink:0}
+.resumen-print .links a small{display:block;color:#64748b;font-size:11px;margin-top:2px}
+.resumen-print .links a div{flex:1}
+.resumen-print .nota{
+  font-size:12px;color:#64748b;margin-top:14px;padding:10px 12px;
+  background:#f8fafc;border-radius:var(--border-radius-md);line-height:1.5;
+}
+.resumen-print .firma{margin-top:18px;text-align:center;font-size:11px;color:#94a3b8;line-height:1.5}
+/* ── @media print: oculta toda la app y deja sólo el resumen ── */
+@media print{
+  body{background:white!important;padding:0!important}
+  #cw,#hdr,#msgs,#opts{display:none!important}
+  #resumen-overlay{position:static!important;background:transparent!important;padding:0!important;display:block!important}
+  #resumen-overlay.open{display:block!important}
+  .resumen-toolbar{display:none!important}
+  .resumen-modal{box-shadow:none!important;border-radius:0!important;max-width:100%!important}
+  .resumen-print{padding:24px 0!important;page-break-inside:avoid}
+  .resumen-print a{color:#1a4fa0!important;text-decoration:underline!important}
+}
 </style>
 
 <div id="cw">
@@ -190,12 +301,22 @@ input.date-inp,select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5p
     <div class="logo"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-7 3a3 3 0 110 6 3 3 0 010-6zm5 12H7v-.6c0-2.2 3.3-3.4 5-3.4s5 1.2 5 3.4v.6z"/></svg></div>
     <div><h1>Asistente de Licencia de Conducir</h1><p>Municipalidad de San Vicente · Santa Fe</p></div>
   </div>
-  <div class="pbar" id="pbar">
-    <div class="ps" id="ps0"></div><div class="ps" id="ps1"></div><div class="ps" id="ps2"></div>
-    <div class="ps" id="ps3"></div><div class="ps" id="ps4"></div><div class="ps" id="ps5"></div>
-  </div>
   <div id="msgs"></div>
   <div id="opts"></div>
+</div>
+
+<!-- Modal del Resumen final (Fase 2) -->
+<div id="resumen-overlay" role="dialog" aria-modal="true" aria-label="Resumen del trámite">
+  <div class="resumen-modal" id="resumen-modal-inner">
+    <div class="resumen-toolbar">
+      <h2>Resumen del trámite</h2>
+      <div class="resumen-toolbar-actions">
+        <button type="button" class="btn-pdf" id="btn-descargar-pdf">⬇ Descargar PDF</button>
+        <button type="button" class="btn-cerrar" id="btn-cerrar-resumen">Cerrar</button>
+      </div>
+    </div>
+    <div class="resumen-print" id="resumen-print-body"></div>
+  </div>
 </div>
 
 <script>
@@ -203,6 +324,10 @@ input.date-inp,select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5p
    Si omitís finContacto: usa WhatsApp si hay wsp, si no mail. */
 /* WhatsApp municipal (Argentina): 54 + 9 + código + número → 5493492646942 */
 const CONTACTO_WHATSAPP_SV="5493492646942";
+
+/* PDF local de la Ley provincial 13.133 (Santa Fe) — usado cada vez que se la cita en el flujo. */
+const LEY_13133_URL="documentacion/L1313325112010.pdf";
+function leyLink(texto){return `<a href="${LEY_13133_URL}" target="_blank" rel="noopener">${texto||"Ley 13.133"}</a>`;}
 
 const LOCS={
   "San Vicente":{propio:true,wsp:CONTACTO_WHATSAPP_SV,mail:null},
@@ -247,8 +372,59 @@ function getIncluidas(selSet){
 let S={dni:"",localidad:"",tramiteLocal:true,nac:null,edad:0,tipo:"",licActuales:[],subclases:[],selUsuario:[],esProf:false,modoPostLic:null,skipReselectSubs:false};
 const msgs=document.getElementById("msgs"),opts=document.getElementById("opts");
 
-function setProg(n){for(let i=0;i<6;i++){const e=document.getElementById("ps"+i);e.className="ps"+(i<n?" dn":i===n?" on":"");}}
+function setProg(n){/* stepper removido en Fase 1 — no-op */}
 function calcEdad(d){const h=new Date(),n=new Date(d);let a=h.getFullYear()-n.getFullYear();const m=h.getMonth()-n.getMonth();if(m<0||(m===0&&h.getDate()<n.getDate()))a--;return a;}
+
+/* ════════════════════ FASE 3: VIGENCIA Y COSTO ════════════════════
+   Reglas tomadas de la tabla provincial:
+     COMUNES (A excepto A.4, B, G):
+       - Primera vez 18-20: 1 año
+       - Renovación 19-20: 3 años
+       - 21-65 (alta o renovación): 5 años
+       - 66-70: 3 años
+       - 71+: 1 año
+     PROFESIONALES (A.4, C, D, E):
+       - 21-45: 5 años | 46-65: 3 años | 66-70: 2 años | 71+: 1 año
+   Si el trámite mezcla clases comunes y profesionales se aplica la regla profesional. */
+function calcVigencia(edad,esProf,esAlta){
+  if(esProf){
+    if(edad>=21&&edad<=45)return 5;
+    if(edad>=46&&edad<=65)return 3;
+    if(edad>=66&&edad<=70)return 2;
+    if(edad>=71)return 1;
+    return null;
+  }
+  if(edad>=71)return 1;
+  if(edad>=66)return 3;
+  if(edad>=21)return 5;
+  if(esAlta)return 1;
+  if(edad>=19)return 3;
+  return 1;
+}
+
+/* Tabla de costos (pesos):
+   - Comunes  → 1 año $17.800 | 3 años $21.800 | 5 años $31.800
+   - Profesionales → 1 año $36.000 | 2 años o más $38.000 */
+const COSTOS_COMUNES={1:17800,3:21800,5:31800};
+const COSTOS_PROF={1:36000,multi:38000};
+function calcCosto(vigencia,esProf){
+  if(vigencia==null)return null;
+  if(esProf)return vigencia<=1?COSTOS_PROF[1]:COSTOS_PROF.multi;
+  return COSTOS_COMUNES[vigencia]??null;
+}
+
+function fmtPesos(n){
+  if(typeof n!=="number"||Number.isNaN(n))return "—";
+  return "$"+n.toLocaleString("es-AR");
+}
+
+/** Calcula vigencia y costo a partir del estado actual S. */
+function calcVigenciaCosto(){
+  const esAlta=S.tipo==="alta"||S.tipo==="alta_forzada";
+  const v=calcVigencia(S.edad,S.esProf,esAlta);
+  const c=v!=null?calcCosto(v,S.esProf):null;
+  return{vigencia:v,costo:c,esAlta};
+}
 /** Fechas en pantalla y en el resumen: día/mes/año (formato latino dd/mm/aaaa, desde ISO yyyy-mm-dd). */
 function fmtFechaDMY(iso){
   if(!iso)return "—";
@@ -433,11 +609,11 @@ function showDni(backFn){
   const inp=document.createElement("input");inp.type="text";inp.className="dni-inp";inp.inputMode="numeric";inp.autocomplete="off";inp.maxLength=10;inp.placeholder="Ej.: 38123456";
   if(S.dni)inp.value=S.dni;
   const err=document.createElement("p");err.className="err";
-  const btn=makeConfirmBtn("Confirmar DNI");
+  const btn=makeConfirmBtn("Confirmar");
   function norm(v){return v.replace(/\D/g,"");}
   function syncBtn(){
     const n=norm(inp.value);
-    if(n.length>=7&&n.length<=9){activateBtn(btn,"Confirmar DNI");err.style.display="none";}
+    if(n.length>=7&&n.length<=9){activateBtn(btn,"Confirmar");err.style.display="none";}
     else btn.classList.remove("on");
   }
   inp.addEventListener("input",()=>{inp.value=norm(inp.value);syncBtn();});
@@ -602,7 +778,7 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
     if(eff.has("D.3")){
       const acomp=["B.1","B.2","C","D.1","D.2","E.1","E.2"];
       const tieneAcomp=arr.some(c=>acomp.includes(c));
-      if(!tieneAcomp)errs.push("La clase <strong>D.3</strong> debe ir acompañada de B.1 (o superior) o D.1.");
+      if(!tieneAcomp)errs.push("La clase <strong>D.3</strong> debe ir acompañada de B.1 o D.1.");
     }
     return errs;
   }
@@ -649,7 +825,6 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
   opts.appendChild(wrap);
 
   function updateSelector(lastClickedRow){
-    if(errBox)errBox.style.display="none";
     const inc=getIncluidas(selSet);
     Object.entries(rowMap).forEach(([cod,o])=>{
       const row=o.row;
@@ -693,6 +868,13 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
     tagWrap.innerHTML="";
     const totalEff=new Set(selSet);inc.forEach(c=>totalEff.add(c));yaTiene.forEach(c=>totalEff.add(c));
     const soloSel=Array.from(selSet).sort((a,b)=>a.localeCompare(b));
+    const liveErrs=selSet.size?validarAcompanantes(totalEff):[];
+    if(liveErrs.length){
+      errBox.innerHTML=liveErrs.map(e=>`⚠ ${e}`).join("<br>");
+      errBox.style.display="block";
+    } else {
+      errBox.style.display="none";
+    }
     if(totalEff.size===0){
       sumLbl.textContent="Sin subclases seleccionadas";
       btn.classList.remove("on");btn.textContent="Continuar";
@@ -703,7 +885,12 @@ function showSubclasSelector(edad,presel,onConfirm,backFn,cfg){
         const t=document.createElement("span");t.className="stag"+(sc&&sc.prof?" prof":"");t.textContent=c;
         tagWrap.appendChild(t);
       });
-      activateBtn(btn,`Continuar (${soloSel.length} seleccionada${soloSel.length!==1?"s":""})`);
+      if(liveErrs.length){
+        btn.classList.remove("on");
+        btn.textContent=`Falta clase acompañante (${soloSel.length} seleccionada${soloSel.length!==1?"s":""})`;
+      } else {
+        activateBtn(btn,`Continuar (${soloSel.length} seleccionada${soloSel.length!==1?"s":""})`);
+      }
     }
     if(lastClickedRow&&lastClickedRow.dataset.cod){
       const ref=rowMap[lastClickedRow.dataset.cod];
@@ -731,10 +918,10 @@ function backToDni(){
 
 async function paso1_loc(){
   setProg(1);
-  await addBot(`¿En qué localidad vivís? El trámite se hace en el municipio de tu domicilio real (el que figura en tu DNI).`);
+  await addBot(`¿En qué localidad vivís?<br><span style="font-size:12px;color:var(--color-text-secondary)">Recordá que debe realizarse en la localidad que figura en tu DNI.</span>`);
   const ayuda=document.createElement("details");
   ayuda.style.cssText="margin:8px 0 6px;font-size:12px;color:var(--color-text-secondary)";
-  ayuda.innerHTML=`<summary style="cursor:pointer">¿Por qué?</summary><div style="margin-top:6px">Porque legalmente la licencia se tramita según domicilio real. Base: Ley 13.133, Art. 25. <a href="https://www.santafe.gov.ar/normativa/item.php?id=111586&cod=26cfeef1d3ef4f785b76888ec0a317ea" target="_blank" rel="noopener">Ver normativa</a>.</div>`;
+  ayuda.innerHTML=`<summary style="cursor:pointer">¿Por qué?</summary><div style="margin-top:6px">Porque legalmente la licencia se tramita según domicilio real. Base: ${leyLink("Ley 13.133")}, Art. 25.</div>`;
   opts.appendChild(ayuda);
   showSelect(Object.keys(LOCS),"Seleccioná tu localidad",backToDni,(val)=>{
     S.localidad=val;
@@ -794,11 +981,11 @@ async function paso3_tieneLC(){
   pickOne([
     {icon:"✗",label:"No, nunca tuve licencia"},
     {icon:"✓",label:"Sí, tengo o tuve una licencia"},
-    {icon:"⚠",label:"La extravié (duplicado)"}
+    {icon:"⚠",label:"La extravié"}
   ],(it,idx)=>{
     if(idx===0){addUser("No, nunca tuve licencia");S.tipo="alta";S.licActuales=[];paso4_nuevasSubs();}
     else if(idx===1){addUser("Sí, tengo o tuve una licencia");paso3b_licActuales();}
-    else{addUser("La extravié (duplicado)");paso3x_extravio();}
+    else{addUser("La extravié");paso3x_extravio();}
   },paso2_nac);
 }
 
@@ -877,7 +1064,7 @@ async function paso3b_licActuales(){
 /* ── Tras elegir licencias actuales: renovar igual vs ampliar ── */
 async function paso3bb_eleccionRenovAmp(){
   setProg(2);
-  await addBot(`¿Querés <strong>renovar las mismas subclases</strong> que ya tenés o <strong>ampliar</strong> con categorías nuevas?`);
+  await addBot(`¿Querés <strong>renovar las mismas clases</strong> que ya tenés o <strong>agregar</strong> categorías nuevas?`);
   pickOne([
     {icon:"↺",label:"Renovar lo que ya tengo"},
     {icon:"+",label:"Ampliar mi licencia",sub:"Agregar nuevas categorías de vehículo a las que ya tengo"}
@@ -898,59 +1085,122 @@ async function paso4_ampliarDesdeLicencia(){
 }
 
 /* ── Vencimiento ── */
+function paso3c_volverDesdeVenc(){
+  if(S.modoPostLic==="ampliar")paso4_ampliarDesdeLicencia();
+  else if(S.modoPostLic==="renovar_igual")paso3bb_eleccionRenovAmp();
+  else paso3b_licActuales();
+}
+
+/* Aplica un estado de vencimiento sin necesidad de fecha exacta.
+   estado: "vigente" | "vencida_reciente" | "vencida_antigua"
+   etiquetaUsuario: lo que se mostró al usuario (para addUser) */
+function paso3c_aplicarEstado(estado,etiquetaUsuario){
+  if(etiquetaUsuario)addUser(etiquetaUsuario);
+  if(estado==="vencida_antigua"){
+    const eraRenovarIgual=S.modoPostLic==="renovar_igual";
+    const eraAmpliar=S.modoPostLic==="ampliar";
+    S.modoPostLic=null;
+    S.tipo="alta_forzada";
+    if(eraRenovarIgual&&S.licActuales&&S.licActuales.length){
+      S.skipReselectSubs=true;
+      S.subclases=[...S.licActuales];
+      S.esProf=S.subclases.some(c=>SUBS.find(s=>s.cod===c)?.prof);
+      void (async()=>{
+        await addBot(`Tu licencia venció hace más de un año: corresponde un <span class="badge bw">Alta</span> con exámenes completos (${leyLink("Ley 13.133")}).<br><br>Como elegiste renovar tus clases actuales, <strong>mantenemos las mismas subclases</strong> que ya habías indicado; las vas a ver en el resumen.`);
+        paso5_requisitos();
+      })();
+    } else if(eraAmpliar&&S.subclases&&S.subclases.length){
+      S.skipReselectSubs=true;
+      S.esProf=S.subclases.some(c=>SUBS.find(s=>s.cod===c)?.prof);
+      void (async()=>{
+        await addBot(`Tu licencia venció hace más de un año: corresponde un <span class="badge bw">Alta</span> con exámenes completos (${leyLink("Ley 13.133")}).`);
+        paso5_requisitos();
+      })();
+    } else {
+      S.skipReselectSubs=false;
+      paso3d_altaForzada();
+    }
+    return;
+  }
+  S.tipo="renovacion";
+  if(S.modoPostLic==="renovar_igual"){
+    S.tipo="renovacion_simple";
+    S.subclases=[...S.licActuales];
+    paso5_requisitos();
+  } else if(S.modoPostLic==="ampliar"){
+    S.tipo="renovacion_ampliacion";
+    paso5_requisitos();
+  }
+}
+
 async function paso3c_venc(){
   setProg(2);
   await addBot(`¿Cuándo vence (o venció) tu licencia?`);
-  showDate("Figura en el frente de tu carné de conducir.",()=>{
-    if(S.modoPostLic==="ampliar")paso4_ampliarDesdeLicencia();
-    else if(S.modoPostLic==="renovar_igual")paso3bb_eleccionRenovAmp();
-    else paso3b_licActuales();
-  },(val)=>{
+  pickOne([
+    {icon:"🗓",label:"Ingresar fecha"},
+    {icon:"?",label:"No sé / no recuerdo"}
+  ],(it,idx)=>{
+    if(idx===0){
+      addUser("Ingresar fecha");
+      paso3c_venc_fecha();
+    } else {
+      addUser("No sé / no recuerdo");
+      paso3c_venc_estado();
+    }
+  },paso3c_volverDesdeVenc);
+}
+
+function paso3c_venc_fecha(){
+  showDate("Figura en el frente de tu carné de conducir.",paso3c_venc,(val)=>{
     const dias=(new Date()-new Date(val))/(1000*60*60*24);
     const fv=fmtFechaDMY(val);
     if(dias>365){
-      const eraRenovarIgual=S.modoPostLic==="renovar_igual";
-      const eraAmpliar=S.modoPostLic==="ampliar";
-      S.modoPostLic=null;
-      addUser(`Fecha de vencimiento: ${fv} — Vencida hace más de un año`);
-      S.tipo="alta_forzada";
-      if(eraRenovarIgual&&S.licActuales&&S.licActuales.length){
-        S.skipReselectSubs=true;
-        S.subclases=[...S.licActuales];
-        S.esProf=S.subclases.some(c=>SUBS.find(s=>s.cod===c)?.prof);
-        void (async()=>{
-          await addBot(`Tu licencia venció hace más de un año: corresponde un <span class="badge bw">Alta</span> con exámenes completos (Ley 13.133).<br><br>Como elegiste renovar tus clases actuales, <strong>mantenemos las mismas subclases</strong> que ya habías indicado; las vas a ver en el resumen.`);
-          paso5_requisitos();
-        })();
-      } else if(eraAmpliar&&S.subclases&&S.subclases.length){
-        S.skipReselectSubs=true;
-        S.esProf=S.subclases.some(c=>SUBS.find(s=>s.cod===c)?.prof);
-        void (async()=>{
-          await addBot(`Tu licencia venció hace más de un año: corresponde un <span class="badge bw">Alta</span> con exámenes completos (Ley 13.133).<br><br>Como ya elegiste las subclases a tramitar, <strong>las mantenemos en el resumen</strong>.`);
-          paso5_requisitos();
-        })();
-      } else {
-        S.skipReselectSubs=false;
-        paso3d_altaForzada();
-      }
+      paso3c_aplicarEstado("vencida_antigua",`Fecha de vencimiento: ${fv} — Vencida hace más de un año`);
     } else {
-      S.tipo="renovacion";
-      addUser(`Fecha de vencimiento: ${fv} — ${dias>0?"Vencida recientemente":"Aún vigente"}`);
-      if(S.modoPostLic==="renovar_igual"){
-        S.tipo="renovacion_simple";
-        S.subclases=[...S.licActuales];
-        paso5_requisitos();
-      } else if(S.modoPostLic==="ampliar"){
-        S.tipo="renovacion_ampliacion";
-        paso5_requisitos();
-      }
+      const estado=dias>0?"vencida_reciente":"vigente";
+      paso3c_aplicarEstado(estado,`Fecha de vencimiento: ${fv} — ${dias>0?"Vencida recientemente":"Aún vigente"}`);
     }
   },null,{mode:"vencimiento"});
 }
 
+async function paso3c_venc_estado(){
+  setProg(2);
+  const intencion={
+    renovar_igual:"renovar las mismas clases que ya tengo",
+    ampliar:"agregar nuevas clases a mi licencia"
+  }[S.modoPostLic]||"continuar el trámite";
+  const lic=S.licActuales&&S.licActuales.length?S.licActuales.join(", "):"—";
+  const sub=S.subclases&&S.subclases.length?S.subclases.join(", "):"—";
+  const msg=[
+    "Hola, necesito asistencia con mi trámite de licencia de conducir.",
+    "No recuerdo la fecha de vencimiento de mi licencia y necesito que verifiquen mi caso manualmente.",
+    "",
+    `DNI: ${S.dni||"—"}`,
+    `Localidad: ${S.localidad||"—"}`,
+    `Fecha de nacimiento: ${S.nac?fmtFechaDMY(S.nac):"—"}${S.edad?" ("+S.edad+" años)":""}`,
+    `Licencia actual (clases): ${lic}`,
+    `Subclases a tramitar: ${sub}`,
+    `Intención: ${intencion}`
+  ].join("\n");
+
+  await addBot(`Como no recordás la fecha de vencimiento, vamos a derivar tu caso por <strong>WhatsApp</strong> al municipio para que el equipo haga las comprobaciones manuales y te indique cómo seguir.`);
+  clearOpts();
+  addBack(paso3c_venc,"Volver");
+  const a=document.createElement("a");
+  a.href=`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${encodeURIComponent(msg)}`;
+  a.target="_blank";a.rel="noopener";
+  a.className="cbtn-confirm on cbtn-turno";
+  a.style.cssText="display:flex;align-items:center;justify-content:center;text-decoration:none;gap:6px";
+  a.textContent="💬 Enviar consulta por WhatsApp";
+  a.onclick=()=>{addUser("Enviar consulta por WhatsApp");setTimeout(()=>paso7_feedback(),250);};
+  opts.appendChild(a);
+  bindEnterToPrimaryButton(opts,a,{requireOn:false});
+  opts.scrollIntoView({behavior:"smooth",block:"end"});
+}
+
 async function paso3d_altaForzada(){
   clearOpts();setProg(2);
-  await addBot(`Tu licencia venció hace más de un año. Debés realizar un <span class="badge bw">Alta</span> y rendir todos los exámenes nuevamente (Art. 23, Ley 13.133).`);
+  await addBot(`Tu licencia venció hace más de un año. Debés realizar un <span class="badge bw">Alta</span> y rendir todos los exámenes nuevamente (Art. 23, ${leyLink("Ley 13.133")}).`);
   paso4_nuevasSubs();
 }
 
@@ -1045,7 +1295,7 @@ function lineasChecklistDocumentacion(){
   return[
     "DOCUMENTACIÓN A PRESENTAR (checklist):",
     "[ ] 1. DNI vigente — original y fotocopia; domicilio en San Vicente.",
-    "[ ] 2. Certificado CENAT — obtenerlo en: https://www.santafe.gov.ar/cenat/",
+    "[ ] 2. Certificado CENAT — tramitar y pagar online; presentar pagado el día del turno: https://www.santafe.gov.ar/cenat/",
     `[ ] 3. Libre de multas municipal — solicitar por WhatsApp: https://wa.me/${CONTACTO_WHATSAPP_SV}`,
     "[ ] 4. Declaración Jurada de Salud — aptitudes psicofísicas (Art. 23 inc. c, Ley 13.133).",
   ];
@@ -1056,6 +1306,9 @@ function textoResumenTramite(){
   const nacFmt=S.nac?fmtFechaDMY(S.nac):"—";
   const subSel=S.selUsuario&&S.selUsuario.length?S.selUsuario.join(", "):"—";
   const subFull=S.subclases&&S.subclases.length?S.subclases.join(", "):"—";
+  const vc=calcVigenciaCosto();
+  const vigTxt=vc.vigencia!=null?`${vc.vigencia} año${vc.vigencia===1?"":"s"}`:"—";
+  const costoTxt=vc.costo!=null?fmtPesos(vc.costo):"—";
   return[
     "RESUMEN — Licencia de conducir",
     "",
@@ -1066,7 +1319,9 @@ function textoResumenTramite(){
     "Tipo de trámite: "+tipoLabel,
     "Subclases elegidas por vos: "+subSel,
     "Subclases del trámite (efectivas / incluidas): "+subFull,
-    "Clases profesionales: "+(S.esProf?"Sí":"No"),
+    "Categoría: "+(S.esProf?"Profesional":"Común / particular"),
+    "Vigencia estimada: "+vigTxt,
+    "Costo estimado: "+costoTxt+(S.tipo==="renovacion_ampliacion"?" (puede ajustarse en ampliaciones)":""),
     "",
     ...lineasChecklistDocumentacion(),
     "",
@@ -1085,6 +1340,16 @@ function canalFinExterno(loc){
   return L.mail?"mail":"wa";
 }
 
+/** Inserta un botón secundario "Ver / Descargar resumen" que abre el modal del resumen completo. */
+function appendResumenBtn(parent){
+  const b=document.createElement("button");
+  b.type="button";b.className="cbtn-resumen";
+  b.innerHTML=`<span class="ic">📄</span><span>Ver y descargar resumen del trámite</span>`;
+  b.onclick=()=>openResumenModal();
+  parent.appendChild(b);
+  return b;
+}
+
 async function paso5b_preTurno(o){
   o=o||{};
   setProg(5);
@@ -1100,7 +1365,7 @@ async function paso5b_preTurno(o){
   addBack(paso5_requisitos,"Volver al paso anterior");
 
   if(S.tramiteLocal){
-    const bTurno=document.createElement("button");bTurno.type="button";bTurno.className="cbtn-confirm on";bTurno.style.marginTop="4px";
+    const bTurno=document.createElement("button");bTurno.type="button";bTurno.className="cbtn-confirm on cbtn-turno";
     if(S.esProf){
       const msg=encodeURIComponent(`Hola, quiero tramitar subclases ${S.subclases.join(", ")}, solicito libre de multas y turno.`);
       bTurno.textContent="💬 Solicitar turno por WhatsApp";
@@ -1113,13 +1378,6 @@ async function paso5b_preTurno(o){
       bTurno.onclick=()=>{window.open("https://turnero-sv.example/","_blank","noopener,noreferrer");addUser("Turno examen teórico-práctico");setTimeout(()=>paso7_feedback(),250);};
     }
     opts.appendChild(bTurno);
-
-    const sep=document.createElement("div");sep.style.cssText="margin:16px 0;border-top:.5px solid var(--color-border-tertiary)";
-    opts.appendChild(sep);
-    const shareLbl=document.createElement("p");shareLbl.className="sub-desc";shareLbl.style.marginBottom="6px";
-    shareLbl.textContent="También podés compartir o guardar el resumen:";
-    opts.appendChild(shareLbl);
-    appendExportToolbar(opts,txt);
   } else {
     const L=LOCS[S.localidad];
     const modo=canalFinExterno(S.localidad);
@@ -1178,18 +1436,12 @@ async function paso5b_preTurno(o){
     }
     const primExt=!S.tramiteLocal&&(opts.querySelector(".cta-btn.cw")||opts.querySelector("a.cta-btn.cp"));
     if(primExt)bindEnterToPrimaryButton(opts,primExt,{requireOn:false});
-
-    const sep=document.createElement("div");sep.style.cssText="margin:16px 0;border-top:.5px solid var(--color-border-tertiary)";
-    opts.appendChild(sep);
-    const shareLbl=document.createElement("p");shareLbl.className="sub-desc";shareLbl.style.marginBottom="6px";
-    shareLbl.textContent="También podés compartir o guardar el resumen:";
-    opts.appendChild(shareLbl);
-    appendExportToolbar(opts,txt);
   }
   if(S.tramiteLocal){
     const bTurno=opts.querySelector(".cbtn-confirm");
     if(bTurno)bindEnterToPrimaryButton(opts,bTurno,{requireOn:false});
   }
+  appendResumenBtn(opts);
   opts.scrollIntoView({behavior:"smooth",block:"end"});
 }
 
@@ -1213,12 +1465,12 @@ async function paso5_requisitos(){
     const REQS_BASE=[
       {
         title:"DNI vigente",
-        desc:"Original y fotocopia. El domicilio debe figurar en San Vicente. Si el domicilio no figura, necesitás también el certificado de residencia.",
+        desc:"Original y fotocopia. El domicilio debe figurar en San Vicente.",
         action:null
       },
       {
         title:"Certificado CENAT",
-        desc:"Certificado Nacional de Antecedentes de Tránsito. Se tramita y paga online — puede demorar hasta 48 hs hábiles.",
+        desc:"Certificado Nacional de Antecedentes de Tránsito. Se tramita y paga online. Recordá que debés concurrir con este certificado pagado el día del turno.",
         action:{label:"Obtener CENAT online",cls:"cs",href:"https://www.santafe.gov.ar/cenat/",blank:true}
       },
       {
@@ -1297,16 +1549,30 @@ async function paso5_requisitos(){
     const sumSec=document.createElement("div");sumSec.className="sum-section";
     sumSec.innerHTML="<h4>Corrobora tus datos</h4>";
     const sc=document.createElement("div");sc.className="sc";sc.style.marginTop="6px";
+    const vc=calcVigenciaCosto();
+    const vigTxt=vc.vigencia!=null?`${vc.vigencia} año${vc.vigencia===1?"":"s"}`:"—";
+    const costoTxt=vc.costo!=null?fmtPesos(vc.costo):"—";
+    const filaCategoria=`<div class="sr"><span>Categoría</span><span>${S.esProf?"Profesional":"Común / particular"}</span></div>`;
+    const filaVigencia=`<div class="sr"><span>Vigencia estimada</span><span>${vigTxt}</span></div>`;
+    const filaCosto=`<div class="sr"><span>Costo estimado</span><span>${costoTxt}</span></div>`;
     sc.innerHTML=`
       <div class="sr"><span>DNI</span><span>${S.dni||"—"}</span></div>
       <div class="sr"><span>Localidad</span><span>${S.localidad||"—"}</span></div>
       <div class="sr"><span>Fecha de nacimiento</span><span>${nacFmt} (${S.edad} años)</span></div>
       <div class="sr"><span>Tipo de trámite</span><span>${tipoLabel}</span></div>
-      <div class="sr"><span>Subclases (seleccionadas)</span><span>${subcDesc}</span></div>`;
+      <div class="sr"><span>Subclases (seleccionadas)</span><span>${subcDesc}</span></div>
+      ${filaCategoria}
+      ${filaVigencia}
+      ${filaCosto}`;
     sumSec.appendChild(sc);
     if(S.tipo==="renovacion_ampliacion"){
       const w=document.createElement("div");w.className="ibox";w.style.marginTop="8px";
-      w.textContent="La vigencia de las nuevas subclases se alineará al vencimiento de tu licencia actual (Art. 28, Ley 13.133).";
+      w.innerHTML=`La vigencia de las nuevas subclases se alineará al vencimiento de tu licencia actual (Art. 28, ${leyLink("Ley 13.133")}). El costo final puede ajustarse al confirmar el trámite en el municipio.`;
+      sumSec.appendChild(w);
+    } else if(vc.vigencia!=null){
+      const w=document.createElement("p");
+      w.style.cssText="margin-top:8px;font-size:12px;color:var(--color-text-secondary);line-height:1.5";
+      w.textContent="Valores estimados: el municipio confirmará el monto definitivo al momento del pago.";
       sumSec.appendChild(w);
     }
     dataSec.appendChild(sumSec);
@@ -1354,12 +1620,7 @@ async function paso6_turno(){
     clearOpts();
     addBack(()=>paso5b_preTurno({silent:true}),"Volver al resumen");
 
-    const txt=textoResumenTramite();
-    const pie=document.createElement("p");pie.className="sub-desc";pie.style.marginBottom="10px";
-    pie.innerHTML="Podés <strong>compartir</strong>, <strong>copiar</strong> o <strong>abrir correo</strong> (con destinatario opcional) con el resumen; las mismas opciones siguen disponibles después de usar el turno.";
-    opts.appendChild(pie);
-
-    appendExportToolbar(opts,txt);
+    appendResumenBtn(opts);
 
     const b=document.createElement("button");b.className="opt-btn";b.style.marginTop="12px";
     b.innerHTML=`<span class="ic">↺</span><div class="ol"><span class="lbl">Iniciar un trámite nuevo</span></div>`;
@@ -1426,6 +1687,167 @@ async function paso7_feedback_detalle(rating){
   opts.appendChild(btn);
   opts.scrollIntoView({behavior:"smooth",block:"end"});
 }
+
+/* ════════════════════ FASE 2: RESUMEN COMPLETO (modal + impresión) ════════════════════
+   Genera una vista HTML completa del trámite con:
+   - Datos personales y del trámite
+   - Vigencia y costo (Fase 3)
+   - Checklist de documentación
+   - Links útiles (CENAT, Declaración Jurada, manual del conductor, Ley 13.133, libre de multas)
+   El usuario puede descargar el resumen como PDF (window.print → "Guardar como PDF"). */
+
+/* URLs de material y formularios. Si alguna no se conoce todavía, se deja como string vacío
+   y el resumen muestra el ítem como "Próximamente disponible" en lugar de un link roto. */
+const RES_URLS={
+  cenat:"https://www.santafe.gov.ar/cenat/",
+  declaracionJurada:"",   // pendiente: PDF de Declaración Jurada de Salud (cargar cuando esté disponible)
+  manualConductor:"documentacion/Manual%20Conductor.pdf",
+  simuladorExamen:"https://www.santafe.gob.ar/examenlicencia/examenETLC/listarCuestionarios.php",
+  ley13133:LEY_13133_URL,
+  libreMultasWa:`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${encodeURIComponent("Hola, necesito el libre de multas para licencia de conducir.")}`
+};
+
+/** Determina si el trámite incluye examen teórico-práctico (alta, alta forzada o renovación con ampliación, no profesional). */
+function tramiteIncluyeExamenTeorico(){
+  if(S.esProf)return false;
+  if(S.tipo==="renovacion_simple")return false;
+  return S.tipo==="alta"||S.tipo==="alta_forzada"||S.tipo==="renovacion_ampliacion";
+}
+
+function htmlEscape(s){
+  return String(s==null?"":s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+}
+
+function buildResumenHtml(){
+  const tipoLabel={
+    alta:"Alta — primera licencia",
+    alta_forzada:"Alta — vencida más de 1 año",
+    renovacion_simple:"Renovación simple",
+    renovacion_ampliacion:"Renovación con ampliación"
+  }[S.tipo]||String(S.tipo||"—");
+
+  const vc=calcVigenciaCosto();
+  const vigTxt=vc.vigencia!=null?`${vc.vigencia} año${vc.vigencia===1?"":"s"}`:"—";
+  const costoTxt=vc.costo!=null?fmtPesos(vc.costo):"—";
+  const subSel=S.selUsuario&&S.selUsuario.length?S.selUsuario.join(", "):"—";
+  const subFull=S.subclases&&S.subclases.length?S.subclases.join(", "):"—";
+  const nacFmt=S.nac?fmtFechaDMY(S.nac):"—";
+
+  /* Checklist de documentación: idem flujo principal */
+  const reqs=[
+    {n:"DNI vigente",d:"Original y fotocopia. El domicilio debe figurar en San Vicente."},
+    {n:"Certificado CENAT",d:"Certificado Nacional de Antecedentes de Tránsito. Tramitar y pagar online; presentar pagado el día del turno."}
+  ];
+  if(!S.esProf){
+    reqs.push({n:"Libre de multas municipal",d:"Verificá que no tenés infracciones firmes pendientes. Si tenés multas, regularizá antes."});
+  }
+  reqs.push({n:"Declaración Jurada de Salud",d:"Aptitudes psicofísicas (Art. 23 inc. c, Ley 13.133). Completala antes de ir al municipio."});
+
+  const checklistHtml=reqs.map((r,i)=>`
+    <li><div class="box"></div><div><strong>${i+1}. ${htmlEscape(r.n)}</strong><small>${htmlEscape(r.d)}</small></div></li>
+  `).join("");
+
+  /* Links útiles: si la URL es vacía, muestro un texto "(próximamente)" en lugar de link */
+  function linkItem(icon,titulo,desc,url){
+    const tieneUrl=!!url;
+    if(!tieneUrl){
+      return `<a href="#" onclick="return false" style="opacity:.55;cursor:not-allowed">
+        <span class="lico">${icon}</span><div><strong>${htmlEscape(titulo)}</strong><small>${htmlEscape(desc)} — próximamente disponible</small></div></a>`;
+    }
+    return `<a href="${htmlEscape(url)}" target="_blank" rel="noopener">
+      <span class="lico">${icon}</span><div><strong>${htmlEscape(titulo)}</strong><small>${htmlEscape(desc)}</small></div></a>`;
+  }
+
+  const incluyeExamen=tramiteIncluyeExamenTeorico();
+  const itemsLinks=[
+    linkItem("📄","Certificado CENAT","Tramitalo y pagalo online antes del turno",RES_URLS.cenat),
+    linkItem("🩺","Declaración Jurada de Salud","Formulario para descargar y completar",RES_URLS.declaracionJurada)
+  ];
+  if(incluyeExamen){
+    itemsLinks.push(linkItem("📚","Manual del conductor (PDF)","Material de estudio para el examen teórico",RES_URLS.manualConductor));
+    itemsLinks.push(linkItem("📝","Simulador de examen teórico","Practicá online preguntas oficiales antes del examen",RES_URLS.simuladorExamen));
+  }
+  itemsLinks.push(linkItem("⚖","Ley provincial 13.133","Marco normativo de licencias en Santa Fe",RES_URLS.ley13133));
+  itemsLinks.push(linkItem("💬","Libre de multas municipal","Solicitar por WhatsApp al municipio",RES_URLS.libreMultasWa));
+  const linksHtml=itemsLinks.join("");
+
+  /* Nota especial para ampliación: vigencia se alinea al vencimiento actual */
+  const notaAmpliacion=S.tipo==="renovacion_ampliacion"
+    ?`<div class="nota"><strong>Aviso (ampliación):</strong> la vigencia de las nuevas subclases se alineará al vencimiento de tu licencia actual (Art. 28, Ley 13.133). El monto final puede ajustarse al confirmar el trámite en el municipio.</div>`
+    :"";
+
+  return `
+    <h1>Resumen — Licencia de conducir</h1>
+    <div class="meta">Generado el ${fmtFechaHoraAhora()}</div>
+
+    <h2>Datos personales</h2>
+    <div class="grid2">
+      <div><strong>DNI</strong><span>${htmlEscape(S.dni||"—")}</span></div>
+      <div><strong>Localidad de domicilio</strong><span>${htmlEscape(S.localidad||"—")}</span></div>
+      <div><strong>Fecha de nacimiento</strong><span>${nacFmt}</span></div>
+      <div><strong>Edad</strong><span>${S.edad?S.edad+" años":"—"}</span></div>
+    </div>
+
+    <h2>Detalle del trámite</h2>
+    <div class="grid2">
+      <div><strong>Tipo de trámite</strong><span>${htmlEscape(tipoLabel)}</span></div>
+      <div><strong>Categoría</strong><span>${S.esProf?"Profesional":"Común / particular"}</span></div>
+      <div style="grid-column:1 / -1"><strong>Subclases elegidas por vos</strong><span>${htmlEscape(subSel)}</span></div>
+      <div style="grid-column:1 / -1"><strong>Subclases efectivas (incluye automáticas)</strong><span>${htmlEscape(subFull)}</span></div>
+      <div><strong>Ámbito de gestión</strong><span>${S.tramiteLocal?"San Vicente (turno local)":"Otro municipio"}</span></div>
+    </div>
+
+    <h2>Vigencia y costo estimado</h2>
+    <div class="pago">
+      <div class="pago-detalle">
+        <div>Vigencia estimada: <strong>${vigTxt}</strong></div>
+        <div>Calculado según edad${S.esProf?" y categoría profesional":""}.</div>
+      </div>
+      <div class="pago-monto">${costoTxt}</div>
+    </div>
+    ${notaAmpliacion}
+
+    <h2>Documentación a presentar</h2>
+    <ul class="checklist">${checklistHtml}</ul>
+
+    <h2>Links útiles</h2>
+    <div class="links">${linksHtml}</div>
+
+    <div class="firma">Asistente municipal de licencias · San Vicente, Santa Fe<br>Documento generado automáticamente · Los montos son estimados y los confirma el municipio al momento del pago.</div>
+  `;
+}
+
+function openResumenModal(){
+  const ov=document.getElementById("resumen-overlay");
+  const body=document.getElementById("resumen-print-body");
+  if(!ov||!body)return;
+  body.innerHTML=buildResumenHtml();
+  ov.classList.add("open");
+  document.body.style.overflow="hidden";
+}
+
+function closeResumenModal(){
+  const ov=document.getElementById("resumen-overlay");
+  if(!ov)return;
+  ov.classList.remove("open");
+  document.body.style.overflow="";
+}
+
+/* Wiring del modal — listeners se enganchan una sola vez al cargar la página */
+(function bindResumenModal(){
+  const ov=document.getElementById("resumen-overlay");
+  const btnPdf=document.getElementById("btn-descargar-pdf");
+  const btnX=document.getElementById("btn-cerrar-resumen");
+  if(!ov||!btnPdf||!btnX)return;
+  btnX.addEventListener("click",closeResumenModal);
+  ov.addEventListener("click",e=>{if(e.target===ov)closeResumenModal();});
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&ov.classList.contains("open"))closeResumenModal();
+  });
+  btnPdf.addEventListener("click",()=>{window.print();});
+})();
 
 function reiniciar(){
   if(window._optsEnterAbort){
