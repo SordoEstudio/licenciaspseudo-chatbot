@@ -349,6 +349,69 @@ input.date-inp,select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5p
   text-align:center;
 }
 .turno-resumen.ok{background:#e1f5ee;border-color:#9fe1cb;color:#085041;font-weight:500}
+
+/* ── Tablet ── */
+@media (max-width:768px){
+  #cw{padding:1rem 0 1.5rem}
+  .bubble{max-width:94%;font-size:13.5px}
+  .resumen-modal{max-width:100%}
+  .turno-modal{max-width:100%}
+  .resumen-print{padding:20px 18px}
+  .resumen-print .grid2{gap:6px 12px}
+  .turno-horarios{grid-template-columns:repeat(auto-fill,minmax(64px,1fr))}
+}
+
+/* ── Mobile ── */
+@media (max-width:480px){
+  body{padding:0 8px}
+  #cw{padding:.75rem 0 1.25rem}
+  #hdr{gap:10px;padding-bottom:1rem;margin-bottom:.75rem}
+  #hdr .logo{width:34px;height:34px}
+  #hdr h1{font-size:14px}
+  #hdr p{font-size:11px}
+  .bubble{max-width:95%;font-size:13.5px;padding:9px 12px}
+  .av{width:24px;height:24px;font-size:10px}
+  .msg{gap:8px}
+  .opt-btn{padding:10px 12px}
+  .opt-btn .lbl{font-size:13.5px}
+  .cbtn-confirm{padding:12px 14px;font-size:14px}
+  .cta-btn{font-size:13px;padding:10px 12px}
+  /* Modal resumen full-screen */
+  #resumen-overlay{padding:0}
+  .resumen-modal{border-radius:0;min-height:100vh;max-width:100%}
+  .resumen-toolbar{padding:10px 12px;flex-wrap:wrap;gap:6px}
+  .resumen-toolbar h2{font-size:14px;flex:1 1 100%}
+  .resumen-toolbar-actions{flex:1 1 100%;justify-content:flex-end}
+  .resumen-print{padding:16px 14px}
+  .resumen-print h1{font-size:18px}
+  .resumen-print h2{font-size:14px;margin:16px 0 6px}
+  .resumen-print .grid2{grid-template-columns:1fr;gap:6px}
+  .resumen-print .grid2 div[style*="grid-column"]{grid-column:1 / -1!important}
+  .resumen-print .pago{flex-direction:column;align-items:flex-start;padding:12px 14px}
+  .resumen-print .pago-monto{font-size:20px}
+  .resumen-print .checklist li,
+  .resumen-print .links a{font-size:12.5px}
+  /* Modal turno full-screen */
+  #turno-overlay{padding:0;align-items:stretch}
+  .turno-modal{border-radius:0;min-height:100vh;max-width:100%;margin:0}
+  .turno-toolbar{padding:12px 14px}
+  .turno-toolbar h2{font-size:14px}
+  .turno-body{padding:14px;gap:10px}
+  .turno-nav button{padding:8px 14px;font-size:15px}
+  .turno-nav span{font-size:13px}
+  .turno-cal-head,.turno-cal{gap:3px}
+  .turno-cal .td{font-size:12px;border-radius:6px}
+  .turno-horarios{grid-template-columns:repeat(4,1fr);gap:5px}
+  .turno-horarios .th{font-size:12px;padding:9px 4px}
+  .turno-resumen{font-size:12.5px;padding:9px 10px}
+  /* Selector de subclases — más compacto */
+  .clase-toggle{padding:9px 10px;gap:8px}
+  .clase-toggle .ct-name{font-size:12.5px}
+  .clase-toggle .ct-sub{font-size:10.5px}
+  .sub-row{padding:8px 10px;gap:8px}
+  .ibox,.wbox,.gbox{font-size:12.5px;padding:9px 10px}
+  input.date-inp,select.fsel,.dni-inp{font-size:14px}
+}
 </style>
 
 <div id="cw">
@@ -620,7 +683,7 @@ function bindEnterDocContinuar(scopeEl,goBtn){
 
 /* ── Una opción = un tap (sin paso Confirmar intermedio) ── */
 function pickOne(items,onPick,backFn,backLbl){
-  clearOpts();if(backFn)addBack(backFn,backLbl||"Volver");
+  clearOpts();if(backFn)addBack(backFn,backLbl);
   items.forEach((item,i)=>{
     const b=document.createElement("button");b.className="opt-btn"+(item.dim?" dim":"");
     b.innerHTML=`<span class="ic">${item.icon||"›"}</span><div class="ol"><span class="lbl">${item.label}</span>${item.sub?`<span class="sub">${item.sub}</span>`:""}</div>`;
@@ -1119,7 +1182,7 @@ async function paso3x_extravio_final(info){
   ].join("\n");
   await addBot(`Con estos datos te derivamos por WhatsApp para validación y próximos pasos.`);
   clearOpts();
-  addBack(paso3_tieneLC,"Volver");
+  addBack(paso3_tieneLC);
   const a=document.createElement("a");
   a.href=`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${encodeURIComponent(msg)}`;
   a.target="_blank";a.rel="noopener";a.className="cbtn-confirm on";
@@ -1151,7 +1214,7 @@ async function paso3bb_eleccionRenovAmp(){
   ],(it,idx)=>{
     if(idx===0){S.modoPostLic="renovar_igual";addUser("Renovar mis clases actuales");paso3c_venc();}
     else{S.modoPostLic="ampliar";addUser("Quiero ampliar");paso4_ampliarDesdeLicencia();}
-  },paso3b_licActuales,"Volver a licencias actuales");
+  },paso3b_licActuales);
 }
 
 /* ── Ampliación: solo subclases nuevas (las actuales van bloqueadas en gris) ── */
@@ -1186,7 +1249,7 @@ function paso3c_aplicarEstado(estado,etiquetaUsuario){
       S.subclases=[...S.licActuales];
       S.esProf=S.subclases.some(c=>SUBS.find(s=>s.cod===c)?.prof);
       void (async()=>{
-        await addBot(`Tu licencia venció hace más de un año: corresponde un <span class="badge bw">Alta</span> con exámenes completos (${leyLink("Ley 13.133")}).<br><br>Como elegiste renovar tus clases actuales, <strong>mantenemos las mismas subclases</strong> que ya habías indicado; las vas a ver en el resumen.`);
+        await addBot(`Tu licencia venció hace más de un año: corresponde un <span class="badge bw">Alta</span> con exámenes completos (${leyLink("Ley 13.133")}).`);
         paso5_requisitos();
       })();
     } else if(eraAmpliar&&S.subclases&&S.subclases.length){
@@ -1216,22 +1279,7 @@ function paso3c_aplicarEstado(estado,etiquetaUsuario){
 async function paso3c_venc(){
   setProg(2);
   await addBot(`¿Cuándo vence (o venció) tu licencia?`);
-  pickOne([
-    {icon:"🗓",label:"Ingresar fecha"},
-    {icon:"?",label:"No sé / no recuerdo"}
-  ],(it,idx)=>{
-    if(idx===0){
-      addUser("Ingresar fecha");
-      paso3c_venc_fecha();
-    } else {
-      addUser("No sé / no recuerdo");
-      paso3c_venc_estado();
-    }
-  },paso3c_volverDesdeVenc);
-}
-
-function paso3c_venc_fecha(){
-  showDate("Figura en el frente de tu carné de conducir.",paso3c_venc,(val)=>{
+  showDate("Figura en el frente de tu carné de conducir.",paso3c_volverDesdeVenc,(val)=>{
     const dias=(new Date()-new Date(val))/(1000*60*60*24);
     const fv=fmtFechaDMY(val);
     if(dias>365){
@@ -1241,6 +1289,11 @@ function paso3c_venc_fecha(){
       paso3c_aplicarEstado(estado,`Fecha de vencimiento: ${fv} — ${dias>0?"Vencida recientemente":"Aún vigente"}`);
     }
   },null,{mode:"vencimiento"});
+  const btnNo=document.createElement("button");
+  btnNo.type="button";btnNo.className="opt-btn";btnNo.style.marginTop="8px";
+  btnNo.innerHTML=`<span class="ic">?</span><div class="ol"><span class="lbl">No sé / no recuerdo</span></div>`;
+  btnNo.onclick=()=>{addUser("No sé / no recuerdo");paso3c_venc_estado();};
+  opts.appendChild(btnNo);
 }
 
 async function paso3c_venc_estado(){
@@ -1265,7 +1318,7 @@ async function paso3c_venc_estado(){
 
   await addBot(`Como no recordás la fecha de vencimiento, vamos a derivar tu caso por <strong>WhatsApp</strong> al municipio para que el equipo haga las comprobaciones manuales y te indique cómo seguir.`);
   clearOpts();
-  addBack(paso3c_venc,"Volver");
+  addBack(paso3c_venc);
   const a=document.createElement("a");
   a.href=`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${encodeURIComponent(msg)}`;
   a.target="_blank";a.rel="noopener";
@@ -1916,7 +1969,7 @@ async function paso6_turno(){
   await addBot(buildTurnero());
   setTimeout(()=>{
     clearOpts();
-    addBack(()=>paso5b_preTurno({silent:true}),"Volver al resumen");
+    addBack(()=>paso5b_preTurno({silent:true}));
 
     appendResumenBtn(opts);
 
@@ -1951,7 +2004,7 @@ async function paso7_feedback(){
   ],(it,idx)=>{
     addUser(it.label);
     paso7_feedback_detalle(idx);
-  },()=>paso5b_preTurno({silent:true}),"Volver");
+  },()=>paso5b_preTurno({silent:true}));
 }
 
 async function paso7_feedback_detalle(rating){
@@ -1962,7 +2015,7 @@ async function paso7_feedback_detalle(rating){
   ];
   await addBot(preguntas[rating]);
   clearOpts();
-  addBack(()=>paso7_feedback(),"Volver");
+  addBack(()=>paso7_feedback());
   const ta=document.createElement("textarea");
   ta.placeholder="Escribí tu comentario (opcional)";
   ta.style.cssText="width:100%;min-height:80px;font-size:13px;padding:9px 10px;border:.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-primary);color:var(--color-text-primary);font-family:inherit;resize:vertical;margin-top:6px";
