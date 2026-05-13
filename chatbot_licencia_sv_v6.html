@@ -294,6 +294,61 @@ input.date-inp,select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5p
   .resumen-print{padding:24px 0!important;page-break-inside:avoid}
   .resumen-print a{color:#1a4fa0!important;text-decoration:underline!important}
 }
+/* ── Modal Turnero ── */
+#turno-overlay{
+  display:none;position:fixed;inset:0;background:rgba(15,23,42,.6);
+  z-index:1000;padding:20px 12px;overflow-y:auto;
+}
+#turno-overlay.open{display:flex;align-items:flex-start;justify-content:center}
+.turno-modal{
+  background:#fff;border-radius:var(--border-radius-lg);max-width:520px;width:100%;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);display:flex;flex-direction:column;overflow:hidden;
+  margin:auto;
+}
+.turno-toolbar{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  padding:14px 16px;border-bottom:.5px solid var(--color-border-tertiary);background:#f8fafc;
+}
+.turno-toolbar h2{font-size:15px;font-weight:600;color:var(--color-text-primary);margin:0}
+.turno-toolbar .btn-cerrar{
+  background:transparent;border:.5px solid var(--color-border-secondary);
+  border-radius:var(--border-radius-md);padding:6px 12px;font-size:12px;cursor:pointer;
+  color:var(--color-text-secondary);
+}
+.turno-body{padding:16px;display:flex;flex-direction:column;gap:12px}
+.turno-nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.turno-nav button{
+  background:#fff;border:.5px solid var(--color-border-secondary);
+  border-radius:var(--border-radius-md);padding:6px 12px;font-size:14px;cursor:pointer;
+}
+.turno-nav button:disabled{opacity:.4;cursor:not-allowed}
+.turno-nav span{font-size:14px;font-weight:500;color:var(--color-text-primary);text-transform:capitalize}
+.turno-cal-head,.turno-cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.turno-cal-head{font-size:11px;color:var(--color-text-secondary);text-align:center;font-weight:500;margin-bottom:2px}
+.turno-cal .td{
+  aspect-ratio:1;display:flex;align-items:center;justify-content:center;
+  font-size:13px;border-radius:var(--border-radius-md);
+  background:#fff;border:.5px solid var(--color-border-tertiary);cursor:pointer;color:var(--color-text-primary);
+}
+.turno-cal .td.empty{background:transparent;border:none;pointer-events:none}
+.turno-cal .td.past,.turno-cal .td.no{opacity:.32;cursor:not-allowed;background:#f1f5f9;color:#94a3b8}
+.turno-cal .td.ok:hover{background:#e6f1fb;border-color:#1a4fa0}
+.turno-cal .td.sel{background:#1a4fa0;color:#fff;border-color:#1a4fa0;font-weight:600}
+.turno-horarios-wrap h3{font-size:13px;font-weight:500;color:var(--color-text-secondary);margin:0 0 6px}
+.turno-horarios{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px;min-height:8px}
+.turno-horarios .th{
+  background:#fff;border:.5px solid var(--color-border-secondary);
+  border-radius:var(--border-radius-md);padding:8px 6px;font-size:12px;cursor:pointer;
+  color:var(--color-text-primary);
+}
+.turno-horarios .th:hover{background:#e6f1fb;border-color:#1a4fa0}
+.turno-horarios .th.sel{background:#1a4fa0;color:#fff;border-color:#1a4fa0;font-weight:600}
+.turno-resumen{
+  background:#f8fafc;border:.5px solid var(--color-border-tertiary);
+  border-radius:var(--border-radius-md);padding:10px 12px;font-size:13px;color:var(--color-text-primary);
+  text-align:center;
+}
+.turno-resumen.ok{background:#e1f5ee;border-color:#9fe1cb;color:#085041;font-weight:500}
 </style>
 
 <div id="cw">
@@ -316,6 +371,31 @@ input.date-inp,select.fsel{width:100%;font-size:13px;padding:9px 10px;border:.5p
       </div>
     </div>
     <div class="resumen-print" id="resumen-print-body"></div>
+  </div>
+</div>
+
+<!-- Modal Turnero -->
+<div id="turno-overlay" role="dialog" aria-modal="true" aria-label="Reservar turno">
+  <div class="turno-modal">
+    <div class="turno-toolbar">
+      <h2 id="turno-title">Reservar turno</h2>
+      <button type="button" class="btn-cerrar" id="btn-cerrar-turno">Cerrar</button>
+    </div>
+    <div class="turno-body">
+      <div class="turno-nav">
+        <button type="button" id="turno-prev" aria-label="Mes anterior">←</button>
+        <span id="turno-mes-label"></span>
+        <button type="button" id="turno-next" aria-label="Mes siguiente">→</button>
+      </div>
+      <div class="turno-cal-head"><span>L</span><span>M</span><span>M</span><span>J</span><span>V</span><span>S</span><span>D</span></div>
+      <div class="turno-cal" id="turno-cal"></div>
+      <div class="turno-horarios-wrap">
+        <h3 id="turno-horarios-titulo">Elegí un día disponible</h3>
+        <div class="turno-horarios" id="turno-horarios"></div>
+      </div>
+      <div class="turno-resumen" id="turno-resumen">Sin selección.</div>
+      <button type="button" class="cbtn-confirm" id="btn-confirmar-turno">Confirmar turno</button>
+    </div>
   </div>
 </div>
 
@@ -369,7 +449,7 @@ function getIncluidas(selSet){
   return r;
 }
 
-let S={dni:"",localidad:"",tramiteLocal:true,nac:null,edad:0,tipo:"",licActuales:[],subclases:[],selUsuario:[],esProf:false,modoPostLic:null,skipReselectSubs:false};
+let S={dni:"",localidad:"",tramiteLocal:true,nac:null,edad:0,tipo:"",licActuales:[],subclases:[],selUsuario:[],esProf:false,modoPostLic:null,skipReselectSubs:false,turno:null};
 const msgs=document.getElementById("msgs"),opts=document.getElementById("opts");
 
 function setProg(n){/* stepper removido en Fase 1 — no-op */}
@@ -1309,6 +1389,12 @@ function textoResumenTramite(){
   const vc=calcVigenciaCosto();
   const vigTxt=vc.vigencia!=null?`${vc.vigencia} año${vc.vigencia===1?"":"s"}`:"—";
   const costoTxt=vc.costo!=null?fmtPesos(vc.costo):"—";
+  const turnoLineas=S.turno?[
+    "",
+    "TURNO RESERVADO:",
+    `· ${S.turno.examen}: ${fmtFechaDMY(S.turno.fecha)} a las ${S.turno.hora} hs`,
+    `· Código de turno: ${S.turno.id}`,
+  ]:[];
   return[
     "RESUMEN — Licencia de conducir",
     "",
@@ -1322,6 +1408,7 @@ function textoResumenTramite(){
     "Categoría: "+(S.esProf?"Profesional":"Común / particular"),
     "Vigencia estimada: "+vigTxt,
     "Costo estimado: "+costoTxt+(S.tipo==="renovacion_ampliacion"?" (puede ajustarse en ampliaciones)":""),
+    ...turnoLineas,
     "",
     ...lineasChecklistDocumentacion(),
     "",
@@ -1350,6 +1437,221 @@ function appendResumenBtn(parent){
   return b;
 }
 
+/* ════════════════════ TURNERO: API mock + Modal ════════════════════
+   Sustituir turneroApi por integración real cuando esté disponible.
+   Contrato esperado:
+   - getDias(fromIso, toIso) → Promise<string[]>  (ISO YYYY-MM-DD con cupo)
+   - getHorarios(fechaIso)    → Promise<string[]> (HH:MM disponibles)
+   - confirmar(fechaIso,hora,datos) → Promise<{ok:boolean,id?:string,error?:string}>
+*/
+const turneroApi={
+  _slots:["08:00","08:30","09:00","09:30","10:00","10:30","11:00","11:30","14:00","14:30","15:00","15:30","16:00","16:30"],
+  async getDias(fromIso,toIso){
+    await new Promise(r=>setTimeout(r,180));
+    const out=[];const ini=new Date(fromIso+"T00:00"),fin=new Date(toIso+"T00:00");
+    for(let d=new Date(ini);d<=fin;d.setDate(d.getDate()+1)){
+      const dow=d.getDay();
+      if(dow===0||dow===6)continue;
+      if((d.getDate()*7+d.getMonth())%5===0)continue;
+      const yyyy=d.getFullYear();
+      const mm=String(d.getMonth()+1).padStart(2,"0");
+      const dd=String(d.getDate()).padStart(2,"0");
+      out.push(`${yyyy}-${mm}-${dd}`);
+    }
+    return out;
+  },
+  async getHorarios(fechaIso){
+    await new Promise(r=>setTimeout(r,140));
+    const d=new Date(fechaIso+"T00:00");
+    const seed=(d.getDate()+d.getMonth())%this._slots.length;
+    return this._slots.filter((_,i)=>(i+seed)%3!==0);
+  },
+  async confirmar(fechaIso,hora,datos){
+    await new Promise(r=>setTimeout(r,260));
+    return{ok:true,id:"TRN-"+Date.now().toString(36).toUpperCase().slice(-6)};
+  }
+};
+
+let _tModal={mes:null,disp:new Set(),dia:null,hora:null,horas:[],tipo:"",onConfirm:null};
+
+function _tFmtMes(d){
+  const s=d.toLocaleDateString("es-AR",{month:"long",year:"numeric"});
+  return s.charAt(0).toUpperCase()+s.slice(1);
+}
+
+async function openTurnoModal({tipoExamen,onConfirm}){
+  const m=new Date();m.setDate(1);m.setHours(0,0,0,0);
+  _tModal={mes:m,disp:new Set(),dia:null,hora:null,horas:[],tipo:tipoExamen||"Turno",onConfirm};
+  document.getElementById("turno-title").textContent=`Reservar turno — ${_tModal.tipo}`;
+  document.getElementById("turno-overlay").classList.add("open");
+  document.body.style.overflow="hidden";
+  await _tCargarMes();
+  _tRender();
+}
+
+function closeTurnoModal(){
+  document.getElementById("turno-overlay").classList.remove("open");
+  document.body.style.overflow="";
+}
+
+async function _tCargarMes(){
+  const m=_tModal.mes;
+  const today=new Date();today.setHours(0,0,0,0);
+  const ini=new Date(m.getFullYear(),m.getMonth(),1);
+  const fin=new Date(m.getFullYear(),m.getMonth()+1,0);
+  const desde=ini<today?today:ini;
+  const isoF=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+  const dias=await turneroApi.getDias(isoF(desde),isoF(fin));
+  _tModal.disp=new Set(dias);
+}
+
+function _tRender(){
+  const m=_tModal.mes;
+  document.getElementById("turno-mes-label").textContent=_tFmtMes(m);
+  const cal=document.getElementById("turno-cal");
+  cal.innerHTML="";
+  const firstDow=(new Date(m.getFullYear(),m.getMonth(),1).getDay()+6)%7;
+  const ultDia=new Date(m.getFullYear(),m.getMonth()+1,0).getDate();
+  const today=new Date();today.setHours(0,0,0,0);
+  for(let i=0;i<firstDow;i++){
+    const e=document.createElement("div");e.className="td empty";cal.appendChild(e);
+  }
+  for(let d=1;d<=ultDia;d++){
+    const dt=new Date(m.getFullYear(),m.getMonth(),d);
+    const iso=`${m.getFullYear()}-${String(m.getMonth()+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+    const past=dt<today;
+    const disp=_tModal.disp.has(iso)&&!past;
+    const sel=_tModal.dia===iso;
+    const b=document.createElement("button");
+    b.type="button";b.className="td"+(past?" past":(disp?" ok":" no"))+(sel?" sel":"");
+    b.textContent=d;
+    if(disp)b.onclick=()=>_tPickDia(iso);
+    else b.disabled=true;
+    cal.appendChild(b);
+  }
+  // botón prev: no permitir antes del mes actual
+  const tmes=new Date();tmes.setDate(1);tmes.setHours(0,0,0,0);
+  const isPastMonth=m.getFullYear()<tmes.getFullYear()||(m.getFullYear()===tmes.getFullYear()&&m.getMonth()<=tmes.getMonth());
+  document.getElementById("turno-prev").disabled=isPastMonth;
+  _tRenderHorarios();
+  _tRenderResumen();
+}
+
+async function _tPickDia(iso){
+  _tModal.dia=iso;_tModal.hora=null;_tModal.horas=[];
+  _tRender();
+  document.getElementById("turno-horarios-titulo").textContent="Cargando horarios...";
+  const horas=await turneroApi.getHorarios(iso);
+  if(_tModal.dia!==iso)return;
+  _tModal.horas=horas;
+  _tRenderHorarios();
+}
+
+function _tRenderHorarios(){
+  const cont=document.getElementById("turno-horarios");
+  const tit=document.getElementById("turno-horarios-titulo");
+  if(!_tModal.dia){tit.textContent="Elegí un día disponible";cont.innerHTML="";return;}
+  const [y,mo,d]=_tModal.dia.split("-");
+  tit.textContent=`Horarios ${d}/${mo}/${y}`;
+  cont.innerHTML="";
+  if(!_tModal.horas.length){
+    const p=document.createElement("p");p.style.cssText="color:#a32d2d;font-size:12px;grid-column:1/-1;text-align:center;margin:0";
+    p.textContent="Sin horarios para ese día. Probá otro.";
+    cont.appendChild(p);return;
+  }
+  _tModal.horas.forEach(h=>{
+    const b=document.createElement("button");b.type="button";b.className="th"+(_tModal.hora===h?" sel":"");
+    b.textContent=h;
+    b.onclick=()=>{_tModal.hora=h;_tRenderHorarios();_tRenderResumen();};
+    cont.appendChild(b);
+  });
+}
+
+function _tRenderResumen(){
+  const r=document.getElementById("turno-resumen");
+  const btn=document.getElementById("btn-confirmar-turno");
+  if(_tModal.dia&&_tModal.hora){
+    const [y,mo,d]=_tModal.dia.split("-");
+    r.textContent=`${d}/${mo}/${y} · ${_tModal.hora} hs`;
+    r.classList.add("ok");
+    btn.classList.add("on");
+  } else {
+    r.textContent=_tModal.dia?"Elegí un horario":"Sin selección.";
+    r.classList.remove("ok");
+    btn.classList.remove("on");
+  }
+}
+
+(function bindTurnoModal(){
+  const ov=document.getElementById("turno-overlay");
+  if(!ov)return;
+  document.getElementById("btn-cerrar-turno").onclick=closeTurnoModal;
+  ov.addEventListener("click",e=>{if(e.target===ov)closeTurnoModal();});
+  document.addEventListener("keydown",e=>{
+    if(e.key==="Escape"&&ov.classList.contains("open"))closeTurnoModal();
+  });
+  document.getElementById("turno-prev").onclick=async()=>{
+    const m=new Date(_tModal.mes);m.setMonth(m.getMonth()-1);
+    _tModal.mes=m;_tModal.dia=null;_tModal.hora=null;_tModal.horas=[];
+    await _tCargarMes();_tRender();
+  };
+  document.getElementById("turno-next").onclick=async()=>{
+    const m=new Date(_tModal.mes);m.setMonth(m.getMonth()+1);
+    _tModal.mes=m;_tModal.dia=null;_tModal.hora=null;_tModal.horas=[];
+    await _tCargarMes();_tRender();
+  };
+  document.getElementById("btn-confirmar-turno").onclick=async()=>{
+    const btn=document.getElementById("btn-confirmar-turno");
+    if(!_tModal.dia||!_tModal.hora||!btn.classList.contains("on"))return;
+    btn.classList.remove("on");btn.textContent="Confirmando...";
+    const res=await turneroApi.confirmar(_tModal.dia,_tModal.hora,{dni:S.dni,tipo:S.tipo,subclases:S.subclases});
+    btn.textContent="Confirmar turno";btn.classList.add("on");
+    if(res.ok){
+      S.turno={fecha:_tModal.dia,hora:_tModal.hora,id:res.id,examen:_tModal.tipo};
+      const cb=_tModal.onConfirm;
+      closeTurnoModal();
+      if(typeof cb==="function")cb(S.turno);
+    } else {
+      alert("No se pudo confirmar el turno: "+(res.error||"intenta de nuevo."));
+    }
+  };
+})();
+
+function _turnoTipoExamen(){
+  return S.tipo==="renovacion_simple" ? "Examen psicofísico" : "Examen teórico-práctico";
+}
+
+function _renderTurnoBlock(){
+  const tipoExamen=_turnoTipoExamen();
+  if(S.turno){
+    const box=document.createElement("div");box.className="gbox";
+    box.innerHTML=`<strong>✅ Turno reservado</strong><br>${tipoExamen}<br>${fmtFechaDMY(S.turno.fecha)} · ${S.turno.hora} hs<br><small style="opacity:.8">Código: ${S.turno.id}</small>`;
+    opts.appendChild(box);
+    const bCambiar=document.createElement("button");bCambiar.type="button";bCambiar.className="opt-btn";bCambiar.style.marginTop="8px";
+    bCambiar.innerHTML=`<span class="ic">✏</span><div class="ol"><span class="lbl">Cambiar turno</span></div>`;
+    bCambiar.onclick=()=>openTurnoModal({tipoExamen,onConfirm:()=>{
+      addUser(`Turno: ${fmtFechaDMY(S.turno.fecha)} ${S.turno.hora}`);
+      paso5b_preTurno({silent:true});
+    }});
+    opts.appendChild(bCambiar);
+    appendResumenBtn(opts);
+    const bFin=document.createElement("button");bFin.type="button";bFin.className="cbtn-confirm on";bFin.textContent="Finalizar";
+    bFin.onclick=()=>{addUser("Finalizar trámite");paso7_feedback();};
+    opts.appendChild(bFin);
+  } else {
+    const bRes=document.createElement("button");bRes.type="button";bRes.className="cbtn-confirm on";
+    bRes.textContent=`📅 Reservar turno — ${tipoExamen}`;
+    bRes.onclick=()=>openTurnoModal({tipoExamen,onConfirm:()=>{
+      addUser(`Turno: ${fmtFechaDMY(S.turno.fecha)} ${S.turno.hora}`);
+      paso5b_preTurno({silent:true});
+    }});
+    opts.appendChild(bRes);
+    const nota=document.createElement("p");nota.style.cssText="color:var(--color-text-secondary);font-size:12px;margin-top:8px;text-align:center;";
+    nota.textContent="Reservá tu turno para ver el resumen final.";
+    opts.appendChild(nota);
+  }
+}
+
 async function paso5b_preTurno(o){
   o=o||{};
   setProg(5);
@@ -1364,20 +1666,16 @@ async function paso5b_preTurno(o){
   clearOpts();
   addBack(paso5_requisitos,"Volver al paso anterior");
 
-  if(S.tramiteLocal){
+  if(S.tramiteLocal && S.esProf){
+    // Profesional → WhatsApp (gestión manual, sin turnero)
     const bTurno=document.createElement("button");bTurno.type="button";bTurno.className="cbtn-confirm on cbtn-turno";
-    if(S.esProf){
-      const msg=encodeURIComponent(`Hola, quiero tramitar subclases ${S.subclases.join(", ")}, solicito libre de multas y turno.`);
-      bTurno.textContent="💬 Solicitar turno por WhatsApp";
-      bTurno.onclick=()=>{window.open(`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${msg}`,"_blank","noopener,noreferrer");addUser("Solicitar turno profesional");setTimeout(()=>paso7_feedback(),250);};
-    } else if(S.tipo==="renovacion_simple"){
-      bTurno.textContent="🩺 Sacar turno — Examen médico";
-      bTurno.onclick=()=>{window.open("https://turnero-sv.example/","_blank","noopener,noreferrer");addUser("Turno examen médico");setTimeout(()=>paso7_feedback(),250);};
-    } else {
-      bTurno.textContent="📋 Sacar turno — Examen teórico-práctico";
-      bTurno.onclick=()=>{window.open("https://turnero-sv.example/","_blank","noopener,noreferrer");addUser("Turno examen teórico-práctico");setTimeout(()=>paso7_feedback(),250);};
-    }
+    const msg=encodeURIComponent(`Hola, quiero tramitar subclases ${S.subclases.join(", ")}, solicito libre de multas y turno.`);
+    bTurno.textContent="💬 Solicitar turno por WhatsApp";
+    bTurno.onclick=()=>{window.open(`https://wa.me/${CONTACTO_WHATSAPP_SV}?text=${msg}`,"_blank","noopener,noreferrer");addUser("Solicitar turno profesional");setTimeout(()=>paso7_feedback(),250);};
     opts.appendChild(bTurno);
+    appendResumenBtn(opts);
+  } else if(S.tramiteLocal){
+    _renderTurnoBlock();
   } else {
     const L=LOCS[S.localidad];
     const modo=canalFinExterno(S.localidad);
@@ -1434,14 +1732,14 @@ async function paso5b_preTurno(o){
       p.textContent="Configurá wsp o mail para esta localidad en LOCS.";
       opts.appendChild(p);
     }
-    const primExt=!S.tramiteLocal&&(opts.querySelector(".cta-btn.cw")||opts.querySelector("a.cta-btn.cp"));
+    const primExt=opts.querySelector(".cta-btn.cw")||opts.querySelector("a.cta-btn.cp");
     if(primExt)bindEnterToPrimaryButton(opts,primExt,{requireOn:false});
+    appendResumenBtn(opts);
   }
-  if(S.tramiteLocal){
+  if(S.tramiteLocal && S.esProf){
     const bTurno=opts.querySelector(".cbtn-confirm");
     if(bTurno)bindEnterToPrimaryButton(opts,bTurno,{requireOn:false});
   }
-  appendResumenBtn(opts);
   opts.scrollIntoView({behavior:"smooth",block:"end"});
 }
 
@@ -1809,6 +2107,15 @@ function buildResumenHtml(){
     </div>
     ${notaAmpliacion}
 
+    ${S.turno?`
+    <h2>Turno reservado</h2>
+    <div class="grid2">
+      <div><strong>Examen</strong><span>${htmlEscape(S.turno.examen)}</span></div>
+      <div><strong>Fecha y hora</strong><span>${fmtFechaDMY(S.turno.fecha)} · ${htmlEscape(S.turno.hora)} hs</span></div>
+      <div style="grid-column:1 / -1"><strong>Código de turno</strong><span>${htmlEscape(S.turno.id)}</span></div>
+    </div>
+    `:""}
+
     <h2>Documentación a presentar</h2>
     <ul class="checklist">${checklistHtml}</ul>
 
@@ -1859,7 +2166,7 @@ function reiniciar(){
     window._svEnterCleanup=null;
   }
   msgs.innerHTML="";opts.innerHTML="";
-  S={dni:"",localidad:"",tramiteLocal:true,nac:null,edad:0,tipo:"",licActuales:[],subclases:[],selUsuario:[],esProf:false,modoPostLic:null,skipReselectSubs:false};
+  S={dni:"",localidad:"",tramiteLocal:true,nac:null,edad:0,tipo:"",licActuales:[],subclases:[],selUsuario:[],esProf:false,modoPostLic:null,skipReselectSubs:false,turno:null};
   paso0();
 }
 
